@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>솟대쟁이 오퍼레이터 화면</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- 메인 콘텐츠 영역 -->
+    <div class="main-content">
+      <!-- 좌측: 언론 패널 -->
+      <div class="left-sidebar">
+        <!-- 상단 정보 패널 -->
+        <div class="info-panel">
+          <div class="stats">
+            <div class="stat-item">
+              <span class="stat-label">Day</span>
+              <span class="stat-value" id="dayDisplay">1</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">안정도</span>
+              <span class="stat-value" id="stabilityDisplay">70%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">범죄율</span>
+              <span class="stat-value" id="crimeRateDisplay">30%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">예산</span>
+              <span class="stat-value" id="budgetDisplay">10,000</span>
+            </div>
+          </div>
+        </div>
+        <div class="news-panel">
+          <h3>뉴스</h3>
+          <div id="newsContainer" class="news-list">
+            <!-- 뉴스는 동적으로 생성됩니다 -->
+          </div>
+        </div>
+        <div class="icon-box-container">
+          <div class="icon-box" data-info-id="0" data-icon-name="도시 통계"></div>
+          <div class="icon-box" data-info-id="1" data-icon-name="파벌 관계"></div>
+          <div class="icon-box" data-info-id="2" data-icon-name="구역 정보"></div>
+          <div class="icon-box" data-info-id="3" data-icon-name="자원 현황"></div>
+          <div class="icon-box" data-info-id="4" data-icon-name="부서 정보"></div>
+        </div>
+      </div>
+
+      <!-- 중앙: 지도 및 선택지 -->
+      <div class="center-content">
+        <!-- 도시 지도 영역 -->
+        <div class="map-area">
+          <canvas id="cityMap" width="800" height="300"></canvas>
+        </div>
+
+        <!-- 선택지 영역 -->
+        <div class="choice-area">
+          <h3>오늘의 선택</h3>
+          <div class="choices" id="choicesContainer">
+            <!-- 선택지는 동적으로 생성됩니다 -->
+          </div>
+          <div id="aiResponse" class="response"></div>
+          <button id="confirmBtn" class="confirm">선택 확정</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 정보 패널 오버레이 -->
+  <div id="infoOverlay" class="info-overlay">
+    <div class="info-panel-content">
+      <div class="info-panel-header">
+        <h2 id="infoPanelTitle">정보</h2>
+        <button class="info-close-btn" id="infoCloseBtn">×</button>
+      </div>
+      <div class="info-panel-body" id="infoPanelBody">
+        <!-- 정보 내용이 동적으로 생성됩니다 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 디지털 글리치 전환 오버레이 -->
+  <div id="glitchOverlay" class="glitch-overlay">
+    <div class="glitch-screen">
+      <div class="glitch-scanlines"></div>
+      <div class="glitch-noise"></div>
+      <div class="glitch-text">시스템 전환 중...</div>
+    </div>
+  </div>
+
+  <script src="js/Sotdaejaengi.js"></script>
+</body>
+</html>

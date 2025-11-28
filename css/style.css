@@ -1,0 +1,891 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: #1a1a1a;
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, #0f0f0f 2px, #0f0f0f 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, #0f0f0f 2px, #0f0f0f 4px);
+    background-size: 20px 20px;
+    color: #eee;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 메인 콘텐츠 레이아웃 */
+.main-content {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.center-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-right: 40px;
+}
+
+/* 상단 정보 패널 */
+.info-panel {
+    width: 100%;
+    background-color: #0a0a0a;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 3px solid #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #6bcf7f;
+    text-shadow: 
+        1px 1px 0 #000,
+        -1px -1px 0 #000;
+    font-family: 'Courier New', monospace;
+}
+
+/* 지도 영역 */
+.map-area {
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+}
+
+.map-area h2 {
+    color: #6bcf7f;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    text-shadow: 
+        2px 2px 0 #000,
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000;
+    font-family: 'Courier New', monospace;
+}
+
+#cityMap {
+    display: block;
+    margin: 0 auto;
+    border: 3px solid #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+    cursor: crosshair;
+    background-color: #0a0a0a;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+#cityMap:hover {
+    border-color: #00ff88;
+}
+
+/* 선택지 영역 */
+.choice-area {
+    width: 100%;
+    max-width: 800px;
+    background: #0a0a0a;
+    padding: 25px;
+    border: 3px solid #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+}
+
+.choice-area h3 {
+    color: #6bcf7f;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    text-align: center;
+    text-shadow: 
+        2px 2px 0 #000,
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000;
+    font-family: 'Courier New', monospace;
+}
+
+.choices {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.choice {
+    background: #1a1a1a;
+    color: #fff;
+    border: 3px solid #444;
+    padding: 20px;
+    cursor: pointer;
+    flex: 1;
+    min-width: 200px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    position: relative;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.choice:hover {
+    background: #2a2a2a;
+    border-color: #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 10px #00ff00;
+}
+
+.choice.selected {
+    background: #003300;
+    border-color: #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 15px #00ff00,
+        inset 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+/* AI 응답 영역 */
+.response {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    min-height: 60px;
+    padding: 15px;
+    background-color: #0a0a0a;
+    border: 3px solid #4a9eff;
+    border-left: 6px solid #6bcf7f;
+    color: #ccc;
+    line-height: 1.6;
+    font-family: 'Courier New', monospace;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+}
+
+.response::before {
+    content: 'AI: ';
+    color: #6bcf7f;
+    font-weight: 700;
+    text-shadow: 
+        1px 1px 0 #000,
+        -1px -1px 0 #000;
+}
+
+/* 확정 버튼 */
+.confirm {
+    width: 100%;
+    background: #003300;
+    color: #6bcf7f;
+    border: 3px solid #4a9eff;
+    padding: 15px 30px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+    text-shadow: 
+        2px 2px 0 #000,
+        -1px -1px 0 #000;
+}
+
+.confirm:hover {
+    background: #2a3e2a;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 15px #4a9eff;
+}
+
+.confirm:active {
+    background: #002200;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.confirm:disabled {
+    background: #1a1a1a;
+    color: #666;
+    border-color: #444;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* 좌측 사이드바 */
+.left-sidebar {
+    width: 280px;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 언론 패널 */
+.news-panel {
+    width: 100%;
+    background: #0a0a0a;
+    padding: 20px;
+    border: 3px solid #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 스크롤바 숨기기 */
+.news-panel::-webkit-scrollbar {
+    display: none;
+}
+
+.news-panel {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.news-panel h3 {
+    color: #6bcf7f;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    text-align: center;
+    text-shadow: 
+        2px 2px 0 #000,
+        -1px -1px 0 #000;
+    border-bottom: 3px solid #4a9eff;
+    padding-bottom: 10px;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+}
+
+/* 뉴스 리스트 */
+.news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    overflow-y: auto;
+    max-height: calc(100vh - 400px);
+}
+
+.news-list::-webkit-scrollbar {
+    display: none;
+}
+
+.news-list {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.news-item {
+    background: #1a1a1a;
+    border: 2px solid #444;
+    padding: 12px;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+    transition: all 0.2s;
+}
+
+.news-item:hover {
+    background: #2a2a2a;
+    border-color: #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 8px rgba(74, 158, 255, 0.4);
+}
+
+.news-title {
+    color: #6bcf7f;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    font-family: 'Courier New', monospace;
+    text-shadow: 
+        1px 1px 0 #000,
+        -1px -1px 0 #000;
+}
+
+.news-content {
+    color: #ccc;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    font-family: 'Courier New', monospace;
+}
+
+.news-time {
+    color: #888;
+    font-size: 0.7rem;
+    margin-top: 8px;
+    font-family: 'Courier New', monospace;
+}
+
+/* 아이콘 박스 컨테이너 */
+.icon-box-container {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.icon-box {
+    width: 40px;
+    height: 40px;
+    background: #1a1a1a;
+    border: 2px solid #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.icon-box:hover {
+    background: #2a2a2a;
+    border-color: #6bcf7f;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 8px #6bcf7f;
+}
+
+/* 툴팁 */
+.icon-box::after {
+    content: attr(data-icon-name);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background: #0a0a0a;
+    border: 2px solid #6bcf7f;
+    color: #6bcf7f;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 100;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 10px rgba(107, 207, 127, 0.5);
+    text-shadow: 
+        1px 1px 0 #000,
+        -1px -1px 0 #000;
+}
+
+.icon-box:hover::after {
+    opacity: 1;
+}
+
+/* 정보 패널 오버레이 */
+.info-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-overlay.active {
+    display: flex;
+}
+
+.info-panel-content {
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    background: #0a0a0a;
+    border: 3px solid #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 30px rgba(74, 158, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.info-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 3px solid #4a9eff;
+    background: #1a1a1a;
+}
+
+.info-panel-header h2 {
+    color: #6bcf7f;
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    text-shadow: 
+        2px 2px 0 #000,
+        -1px -1px 0 #000;
+    margin: 0;
+}
+
+.info-close-btn {
+    background: #1a1a1a;
+    color: #6bcf7f;
+    border: 2px solid #4a9eff;
+    width: 40px;
+    height: 40px;
+    font-size: 2rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+    transition: all 0.2s;
+    line-height: 1;
+    padding: 0;
+}
+
+.info-close-btn:hover {
+    background: #2a2a2a;
+    border-color: #6bcf7f;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 10px #6bcf7f;
+}
+
+.info-panel-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    color: #ccc;
+    font-family: 'Courier New', monospace;
+}
+
+.info-panel-body::-webkit-scrollbar {
+    display: none;
+}
+
+.info-panel-body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.info-section {
+    margin-bottom: 25px;
+}
+
+.info-section h3 {
+    color: #6bcf7f;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-shadow: 
+        1px 1px 0 #000,
+        -1px -1px 0 #000;
+    border-bottom: 2px solid #4a9eff;
+    padding-bottom: 8px;
+}
+
+.info-section p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.info-graph {
+    width: 100%;
+    height: 200px;
+    background: #1a1a1a;
+    border: 2px solid #4a9eff;
+    margin: 15px 0;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+}
+
+.info-image {
+    width: 100%;
+    max-width: 100%;
+    border: 2px solid #4a9eff;
+    margin: 15px 0;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+}
+
+.character-section {
+    margin-bottom: 25px;
+}
+
+.character-section h4 {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+}
+
+.character-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.character-card {
+    background: #1a1a1a;
+    border: 2px solid #444;
+    padding: 12px;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+}
+
+.character-card:hover {
+    border-color: #4a9eff;
+    background: #1f1f1f;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 8px #00ff00;
+}
+
+.character-name {
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+    font-family: 'Courier New', monospace;
+    text-shadow: 
+        1px 1px 0 #000,
+        -1px -1px 0 #000;
+}
+
+.character-role {
+    color: #888;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    font-family: 'Courier New', monospace;
+}
+
+.character-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #aaa;
+    margin-top: 8px;
+}
+
+.character-stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-bar {
+    width: 100%;
+    height: 6px;
+    background-color: #000;
+    border: 1px solid #333;
+    margin-top: 5px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px #000;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    background: #6bcf7f;
+    box-shadow: 0 0 4px #6bcf7f;
+}
+
+.faction-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-top: 5px;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    border: 2px solid;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+    text-shadow: 
+        1px 1px 0 #000,
+        -1px -1px 0 #000;
+}
+
+.faction-badge.bigCorp {
+    background-color: #001122;
+    color: #00aaff;
+    border-color: #00aaff;
+}
+
+.faction-badge.labor {
+    background-color: #220000;
+    color: #ff4444;
+    border-color: #ff4444;
+}
+
+.faction-badge.citizens {
+    background-color: #002200;
+    color: #00ff44;
+    border-color: #00ff44;
+}
+
+.faction-badge.religion {
+    background-color: #221100;
+    color: #ffaa00;
+    border-color: #ffaa00;
+}
+
+.faction-badge.hackers {
+    background-color: #110022;
+    color: #aa00ff;
+    border-color: #aa00ff;
+}
+
+/* 디지털 글리치 전환 효과 */
+.glitch-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 10000;
+    display: none;
+    overflow: hidden;
+}
+
+.glitch-overlay.active {
+    display: block;
+}
+
+.glitch-screen {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #000;
+    animation: glitch-flicker 0.15s infinite;
+}
+
+/* RGB 채널 분리 효과 */
+.glitch-screen::before,
+.glitch-screen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    mix-blend-mode: screen;
+    animation: glitch-shift 0.3s infinite;
+    pointer-events: none;
+}
+
+.glitch-screen::before {
+    clip-path: inset(0 0 0 0);
+    transform: translateX(-2px);
+    filter: drop-shadow(2px 0 0 #ff0000);
+}
+
+.glitch-screen::after {
+    clip-path: inset(0 0 0 0);
+    transform: translateX(2px);
+    filter: drop-shadow(-2px 0 0 #00ffff);
+}
+
+/* 스캔라인 컨테이너 */
+.glitch-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* 개별 스캔라인 */
+.glitch-scanline {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 255, 0, 0.8);
+    box-shadow: 
+        0 0 10px rgba(0, 255, 0, 0.8),
+        0 0 20px rgba(0, 255, 0, 0.5);
+    animation: glitch-scan 0.15s linear infinite;
+}
+
+/* 노이즈 효과 */
+.glitch-noise {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 0, 0.03) 2px, rgba(0, 255, 0, 0.03) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0, 255, 0, 0.03) 2px, rgba(0, 255, 0, 0.03) 4px);
+    background-size: 4px 4px;
+    animation: glitch-noise 0.05s infinite;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* 텍스트 효과 */
+.glitch-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    text-shadow: 
+        0 0 10px #00ff00,
+        2px 0 0 #ff0000,
+        -2px 0 0 #00ffff;
+    animation: glitch-text 0.3s infinite;
+    z-index: 20;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    pointer-events: none;
+}
+
+/* 애니메이션 */
+@keyframes glitch-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.95; }
+}
+
+@keyframes glitch-shift {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-2px); }
+    40% { transform: translateX(2px); }
+    60% { transform: translateX(-1px); }
+    80% { transform: translateX(1px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes glitch-scan {
+    0% { 
+        top: -2px; 
+        opacity: 1; 
+    }
+    100% { 
+        top: 100%; 
+        opacity: 0; 
+    }
+}
+
+@keyframes glitch-noise {
+    0% { background-position: 0 0; }
+    100% { background-position: 4px 4px; }
+}
+
+@keyframes glitch-text {
+    0%, 100% { 
+        transform: translate(-50%, -50%) translateX(0);
+        text-shadow: 
+            0 0 10px #00ff00,
+            2px 0 0 #ff0000,
+            -2px 0 0 #00ffff;
+    }
+    25% { 
+        transform: translate(-50%, -50%) translateX(-2px);
+        text-shadow: 
+            0 0 10px #00ff00,
+            4px 0 0 #ff0000,
+            -4px 0 0 #00ffff;
+    }
+    50% { 
+        transform: translate(-50%, -50%) translateX(2px);
+        text-shadow: 
+            0 0 10px #00ff00,
+            -2px 0 0 #ff0000,
+            2px 0 0 #00ffff;
+    }
+    75% { 
+        transform: translate(-50%, -50%) translateX(-1px);
+        text-shadow: 
+            0 0 10px #00ff00,
+            3px 0 0 #ff0000,
+            -3px 0 0 #00ffff;
+    }
+}
