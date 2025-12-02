@@ -1,132 +1,79 @@
 // 솟대쟁이 - 도시 관리자 시뮬레이션 게임
 
-// 뉴스 템플릿 시스템
-// 선택지별로 뉴스 템플릿을 정의합니다. 여기에 텍스트를 추가/수정하면 됩니다.
-const NewsTemplates = {
-    "시민 지원 확대": {
-        title: "시민 지원 정책 발표",
-        content: "도시 관리부가 시민 단체 지원 확대 정책을 발표했습니다. 시민 단체 관계자들은 긍정적인 반응을 보였습니다.",
-        fullContent: `도시 관리부는 오늘 시민 단체 지원 확대 정책을 발표했습니다.\n\n이번 정책은 시민들의 자치 활동을 지원하고, 지역 커뮤니티의 활성화를 목표로 합니다. 시민 단체 관계자들은 "시민 참여의 확대는 도시 민주주의의 발전을 의미한다"며 긍정적인 반응을 보였습니다.\n\n예산 ${500}만원이 이번 정책에 할당되었습니다.`
-    },
-    "산업 인프라 투자": {
-        title: "산업 인프라 투자 계획 발표",
-        content: "대규모 산업 인프라 투자 계획이 발표되었습니다. 대기업들은 이번 투자에 환영의 뜻을 표했습니다.",
-        fullContent: `도시 관리부는 오늘 대규모 산업 인프라 투자 계획을 발표했습니다.\n\n이번 투자는 도시의 산업 경쟁력을 강화하고 일자리를 창출하는 것을 목표로 합니다. 대기업 관계자들은 "이번 투자는 도시 경제 발전에 큰 도움이 될 것"이라며 환영의 뜻을 표했습니다.\n\n예산 ${800}만원이 이번 투자에 할당되었습니다.`
-    },
-    "정보 자유화": {
-        title: "정보 자유화 정책 시행",
-        content: "정보 자유화 정책이 시행되었습니다. 해커 네트워크와 시민 단체가 이번 정책을 환영했습니다.",
-        fullContent: `도시 관리부는 오늘 정보 자유화 정책을 시행했습니다.\n\n이번 정책은 시민들의 정보 접근권을 확대하고, 투명한 정보 공개를 목표로 합니다. 해커 네트워크는 "정보는 모든 시민의 권리"라며 이번 정책을 환영했으며, 시민 단체들도 긍정적인 반응을 보였습니다.\n\n일부 보안 전문가들은 정보 보안에 대한 우려를 표명했습니다.`
-    },
-    "치안 강화": {
-        title: "도시 치안 강화 조치 발표",
-        content: "도시 전역에 걸친 치안 강화 조치가 발표되었습니다. 범죄율 감소가 기대되지만, 일부 시민들은 자유 제한에 대한 우려를 표명했습니다.",
-        fullContent: `도시 관리부는 오늘 도시 전역에 걸친 치안 강화 조치를 발표했습니다.\n\n이번 조치는 경찰 인력 증원, CCTV 확대 설치, 검문소 강화 등을 포함합니다. 치안부 관계자는 "범죄율 감소와 시민 안전 확보가 최우선 목표"라고 밝혔습니다.\n\n일부 시민 단체들은 "과도한 감시는 시민의 자유를 침해할 수 있다"며 우려를 표명했습니다. 예산 ${600}만원이 이번 조치에 할당되었습니다.`
-    },
-    "노동자 권리 보호": {
-        title: "노동자 권리 보호 법안 통과",
-        content: "노동자 권리 보호 법안이 통과되었습니다. 노조는 환영했지만, 대기업들은 반발하고 있습니다.",
-        fullContent: `도시 관리부는 오늘 노동자 권리 보호 법안을 통과시켰습니다.\n\n이번 법안은 최저 임금 인상, 근로 환경 개선, 노동자 보호 조치 등을 포함합니다. 노동조합은 "오랫동안 기다려온 법안"이라며 환영했으며, 노조 관계자는 "노동자의 권리가 보장되는 것은 사회 정의의 실현"이라고 밝혔습니다.\n\n반면 대기업들은 "기업 경쟁력 저하와 비용 증가를 우려한다"며 반발하고 있습니다. 예산 ${400}만원이 이번 법안 시행에 할당되었습니다.`
-    },
-    "종교 단체 협력": {
-        title: "종교 단체와의 협력 협약 체결",
-        content: "도시 관리부가 종교 단체와 협력 협약을 체결했습니다. 도덕적 치안 강화에 기여할 것으로 기대됩니다.",
-        fullContent: `도시 관리부는 오늘 주요 종교 단체와 협력 협약을 체결했습니다.\n\n이번 협약은 도시의 도덕적 치안 강화와 시민 정신 함양을 목표로 합니다. 종교 단체 대표는 "종교와 정부의 협력은 건강한 사회를 만드는 기반"이라며 긍정적인 반응을 보였습니다.\n\n시민 단체들도 이번 협약에 대해 대체로 긍정적인 평가를 내렸습니다.`
-    }
-};
+// 뉴스 템플릿은 game-content/news/news-templates.js에서 로드됩니다.
+// NewsTemplates 객체가 정의되어 있어야 합니다.
+    
+
+// 사건 템플릿은 game-content/event-templates.js에서 로드됩니다.
+// EventTemplates 객체가 정의되어 있어야 합니다.
 
 // 게임 상태 관리
 class GameState {
     constructor() {
         this.day = 1;
         this.time = 8;
-        this.resources = {
-            budget: 10000,
-            personnel: 100,
-            equipment: 50
-        };
+        // 초기 자원 값
+        // InitialResources는 game-content/initial-values.js에서 로드됩니다.
+        this.resources = (typeof InitialResources !== 'undefined' && InitialResources)
+            ? { ...InitialResources }
+            : { budget: 100, personnel: 100, equipment: 50 };
         
-        this.cityStats = {
-            stability: 70,
-            crimeRate: 30,
-            citizenSatisfaction: 60,
-            factionTension: 40
-        };
+        // 초기 도시 통계
+        // InitialCityStats는 game-content/initial-values.js에서 로드됩니다.
+        this.cityStats = (typeof InitialCityStats !== 'undefined' && InitialCityStats)
+            ? { ...InitialCityStats }
+            : { stability: 70, crimeRate: 30, citizenSatisfaction: 60, factionTension: 40 };
         
-        this.factions = {
-            bigCorp: { trust: 50, tension: 30, name: "대기업" },
-            labor: { trust: 40, tension: 50, name: "노조" },
-            citizens: { trust: 60, tension: 20, name: "시민 단체" },
-            religion: { trust: 55, tension: 25, name: "종교 단체" },
-            hackers: { trust: 30, tension: 60, name: "해커 네트워크" }
-        };
+        // 파벌 정보
+        // FactionsData는 game-content/factions.js에서 로드됩니다.
+        this.factions = (typeof FactionsData !== 'undefined' && FactionsData)
+            ? JSON.parse(JSON.stringify(FactionsData)) // 깊은 복사
+            : {};
         
-        this.districts = [
-            { name: "중앙 구역", type: "central", crimeLevel: 20, x: 0.15, y: 0.3 },
-            { name: "동부 산업 구역", type: "industrial", crimeLevel: 25, x: 0.7, y: 0.4 },
-            { name: "서부 재개발 구역", type: "redevelopment", crimeLevel: 40, x: 0.1, y: 0.6 },
-            { name: "남부 생활 구역", type: "residential", crimeLevel: 15, x: 0.5, y: 0.8 },
-            { name: "북부 물류 구역", type: "logistics", crimeLevel: 30, x: 0.5, y: 0.1 },
-            { name: "외곽 난민촌", type: "refugee", crimeLevel: 60, x: 0.9, y: 0.7 }
-        ];
+        // 도시 구역 정보
+        // CityDistricts는 game-content/districts.js에서 로드됩니다.
+        this.districts = (typeof CityDistricts !== 'undefined' && CityDistricts) 
+            ? [...CityDistricts] // 복사본 사용
+            : []; // CityDistricts가 없을 경우 빈 배열 (기본값)
         
         this.activeEvents = [];
-        this.currentChoices = [];
+        this.factionEvents = []; // 파벌 이벤트
+        
+        // 사건 타입 정의
+        // EventTypesData는 game-content/event-types.js에서 로드됩니다.
+        this.eventTypes = (typeof EventTypesData !== 'undefined' && EventTypesData)
+            ? JSON.parse(JSON.stringify(EventTypesData)) // 깊은 복사
+            : {};
         
         // 뉴스 데이터 (날짜별로 관리)
         this.news = [];
         
         // 플레이어 정보
-        this.player = {
-            name: "플레이어",
-            role: "도시 관리자",
-            authority: 100
-        };
+        // InitialPlayer는 game-content/initial-values.js에서 로드됩니다.
+        this.player = (typeof InitialPlayer !== 'undefined' && InitialPlayer)
+            ? { ...InitialPlayer }
+            : { name: "플레이어", role: "도시 관리자", authority: 100 };
         
         // 부서 인물 데이터 (치안부)
-        this.departments = {
-            minister: {
-                name: "치안부장관",
-                role: "치안부 장관",
-                efficiency: 75,
-                faction: null
-            },
-            viceMinisters: [
-                { 
-                    name: "김차관", 
-                    role: "차관", 
-                    efficiency: 70, 
-                    faction: "bigCorp",
-                    directors: [
-                        { name: "공안부장1", role: "공안부장", efficiency: 70, faction: "bigCorp", type: "surveillance" },
-                        { name: "경찰부장1", role: "경찰부장", efficiency: 75, faction: "bigCorp", type: "police" },
-                        { name: "검문소부장1", role: "검문소부장", efficiency: 65, faction: "bigCorp", type: "checkpoint" }
-                    ]
+        // DepartmentPersonnel은 game-content/department-content.js에서 로드됩니다.
+        this.departments = (typeof DepartmentPersonnel !== 'undefined' && DepartmentPersonnel) 
+            ? JSON.parse(JSON.stringify(DepartmentPersonnel)) // 깊은 복사
+            : {
+                minister: {
+                    name: "이천호",
+                    role: "치안부 장관",
+                    efficiency: 75,
+                    faction: null,
+                    budgetAbility: {
+                        reduction: 0.05,
+                        bonus: 0
+                    }
                 },
-                { 
-                    name: "이차관", 
-                    role: "차관", 
-                    efficiency: 65, 
-                    faction: "labor",
-                    directors: [
-                        { name: "공안부장2", role: "공안부장", efficiency: 68, faction: "labor", type: "surveillance" },
-                        { name: "경찰부장2", role: "경찰부장", efficiency: 72, faction: "labor", type: "police" },
-                        { name: "검문소부장2", role: "검문소부장", efficiency: 70, faction: "labor", type: "checkpoint" }
-                    ]
-                },
-                { 
-                    name: "박차관", 
-                    role: "차관", 
-                    efficiency: 75, 
-                    faction: "citizens",
-                    directors: [
-                        { name: "공안부장3", role: "공안부장", efficiency: 75, faction: "citizens", type: "surveillance" },
-                        { name: "경찰부장3", role: "경찰부장", efficiency: 78, faction: "citizens", type: "police" },
-                        { name: "검문소부장3", role: "검문소부장", efficiency: 73, faction: "citizens", type: "checkpoint" }
-                    ]
-                }
-            ]
-        };
+                viceMinisters: []
+            };
+        
+        // 현재 선택된 인물 (사건 처리 시 사용)
+        this.selectedPersonnel = null;
     }
     
     updateCityStats() {
@@ -143,120 +90,289 @@ class GameState {
         ));
     }
     
-    generateDailyChoices() {
-        // 매일 새로운 선택지 생성
-        const choiceTemplates = [
-            {
-                text: "시민 지원 확대",
-                impact: { citizens: { trust: +10 }, budget: -500 },
-                description: "시민 단체의 호감도가 상승합니다."
-            },
-            {
-                text: "산업 인프라 투자",
-                impact: { bigCorp: { trust: +10 }, budget: -800 },
-                description: "기업가의 지지가 증가합니다."
-            },
-            {
-                text: "정보 자유화",
-                impact: { hackers: { trust: +15, tension: -10 }, citizens: { trust: +5 } },
-                description: "해커 네트워크의 활동이 강화되고, 시민들의 자유가 확대됩니다."
-            },
-            {
-                text: "치안 강화",
-                impact: { crimeRate: -5, bigCorp: { trust: +5 }, citizens: { trust: -5 }, budget: -600 },
-                description: "범죄율이 감소하지만, 시민들의 자유가 제한됩니다."
-            },
-            {
-                text: "노동자 권리 보호",
-                impact: { labor: { trust: +15, tension: -10 }, bigCorp: { trust: -10 }, budget: -400 },
-                description: "노조의 지지가 크게 증가하지만, 대기업의 반발이 있습니다."
-            },
-            {
-                text: "종교 단체 협력",
-                impact: { religion: { trust: +10 }, citizens: { trust: +3 } },
-                description: "종교 단체와의 협력으로 도덕적 치안이 강화됩니다."
-            }
-        ];
-        
-        // 랜덤하게 3개 선택
-        const shuffled = [...choiceTemplates].sort(() => Math.random() - 0.5);
-        this.currentChoices = shuffled.slice(0, 3);
+    // 시간 진행 (1시간씩 증가)
+    // 시간 시스템은 game-content/time/time-system.js에서 관리됩니다.
+    advanceTime(hours = 1) {
+        if (typeof advanceTime === 'function') {
+            advanceTime(this, hours);
+        }
     }
     
-    applyChoice(choiceIndex) {
-        const choice = this.currentChoices[choiceIndex];
-        if (!choice) return;
+    // 시간대 구분 (새벽, 오전, 낮, 오후, 저녁, 밤)
+    // 시간 시스템은 game-content/time/time-system.js에서 관리됩니다.
+    getTimePeriod() {
+        if (typeof getTimePeriod === 'function') {
+            return getTimePeriod(this.time);
+        }
+        return 'dawn';
+    }
+    
+    // 출퇴근 시간 감지
+    // 시간 시스템은 game-content/time/time-system.js에서 관리됩니다.
+    isRushHour() {
+        if (typeof isRushHour === 'function') {
+            return isRushHour(this.time);
+        }
+        return false;
+    }
+    
+    // 시간대별 사건 발생률 배수 계산
+    // 시간 시스템은 game-content/time/time-system.js에서 관리됩니다.
+    getEventRateMultiplier() {
+        if (typeof getEventRateMultiplier === 'function') {
+            return getEventRateMultiplier(this.time);
+        }
+        return 1.0;
+    }
+    
+    // 시간대별 설명 텍스트
+    // 시간 시스템은 game-content/time/time-system.js에서 관리됩니다.
+    getTimeDescription() {
+        if (typeof getTimeDescription === 'function') {
+            return getTimeDescription(this.time);
+        }
+        return '시간';
+    }
+    
+    // 사건 생성 (기본 구조)
+    createEvent(type, districtIndex = null, template = null) {
+        const eventType = this.eventTypes[type];
+        if (!eventType) {
+            console.error(`알 수 없는 사건 타입: ${type}`);
+            return null;
+        }
         
-        const impact = choice.impact;
+        // 구역 선택 (랜덤 또는 지정)
+        const district = districtIndex !== null 
+            ? this.districts[districtIndex]
+            : this.districts[Math.floor(Math.random() * this.districts.length)];
         
-        // 파벌 영향 적용
-        Object.keys(impact).forEach(key => {
-            if (this.factions[key]) {
-                if (impact[key].trust) {
-                    this.factions[key].trust = Math.max(0, Math.min(100, 
-                        this.factions[key].trust + impact[key].trust
-                    ));
-                }
-                if (impact[key].tension !== undefined) {
-                    this.factions[key].tension = Math.max(0, Math.min(100, 
-                        this.factions[key].tension + impact[key].tension
-                    ));
+        // 예산 소모 계산
+        const budgetCost = eventType.budgetCostMin + 
+            Math.random() * (eventType.budgetCostMax - eventType.budgetCostMin);
+        
+        // 사건 객체 생성
+        const event = {
+            id: Date.now() + Math.random(),
+            type: type,
+            title: template?.title || `${eventType.name} 사건`,
+            description: template?.description || `${district.name}에서 ${eventType.name} 사건이 발생했습니다.`,
+            district: district.name,
+            districtIndex: this.districts.indexOf(district),
+            budgetCost: Math.round(budgetCost * 10) / 10, // 소수점 1자리
+            time: this.time,
+            day: this.day,
+            status: 'active', // active, resolved, failed
+            impact: {
+                crimeRate: 0,
+                stability: 0,
+                factionTension: 0
+            },
+            responseType: null, // dispatch, drone, cctv, ignore
+            resolvedAt: null
+        };
+        
+        // 템플릿이 있으면 적용
+        if (template) {
+            if (template.impact) {
+                event.impact = { ...event.impact, ...template.impact };
+            }
+            if (template.budgetCost) {
+                event.budgetCost = template.budgetCost;
+            }
+        }
+        
+        return event;
+    }
+    
+    // 사건 발생 시스템 (시간대별 발생률 적용)
+    generateEvents() {
+        const timeMultiplier = this.getEventRateMultiplier();
+        
+        // 각 사건 타입별로 발생 확인
+        Object.keys(this.eventTypes).forEach(type => {
+            const eventType = this.eventTypes[type];
+            
+            // 현재 활성 사건 개수 확인
+            const activeCount = this.activeEvents.filter(e => e.type === type && e.status === 'active').length;
+            if (activeCount >= eventType.maxActive) {
+                return; // 최대 개수 도달
+            }
+            
+            // 발생 확률 계산 (시간대 배수 적용)
+            const occurrenceChance = eventType.occurrenceRate * timeMultiplier;
+            
+            // 랜덤 발생 확인
+            if (Math.random() < occurrenceChance) {
+                // 템플릿에서 랜덤 선택
+                const templates = EventTemplates[type] || [];
+                const template = templates.length > 0 
+                    ? templates[Math.floor(Math.random() * templates.length)]
+                    : null;
+                
+                const newEvent = this.createEvent(type, null, template);
+                if (newEvent) {
+                    this.activeEvents.push(newEvent);
                 }
             }
         });
+    }
+    
+    // 사건 해결 처리
+    resolveEvent(eventId, responseType = 'dispatch', personnelId = null) {
+        const event = this.activeEvents.find(e => e.id === eventId);
+        if (!event || event.status !== 'active') {
+            return false;
+        }
         
-        // 범죄율 영향
-        if (impact.crimeRate) {
-            this.districts.forEach(district => {
+        // 사건 해결 처리
+        event.status = 'resolved';
+        event.responseType = responseType;
+        event.resolvedAt = { time: this.time, day: this.day };
+        event.personnelId = personnelId; // 처리한 인물 기록
+        
+        // 예산 처리
+        // 예산 시스템은 game-content/budget/budget-system.js에서 관리됩니다.
+        let personnel = null;
+        if (personnelId) {
+            personnel = this.getPersonnelById(personnelId);
+        }
+        
+        let actualBudgetCost = 0;
+        if (typeof calculateEventBudgetCost === 'function') {
+            actualBudgetCost = calculateEventBudgetCost(event, responseType, personnel);
+        } else {
+            // 폴백 (budget-system.js가 로드되지 않은 경우)
+            actualBudgetCost = event.budgetCost;
+            if (responseType === 'drone') actualBudgetCost *= 1.2;
+            else if (responseType === 'cctv') actualBudgetCost *= 0.5;
+            else if (responseType === 'ignore') actualBudgetCost = 0;
+        }
+        
+        // 무시 시 영향 증가
+        if (responseType === 'ignore') {
+            event.impact.crimeRate = (event.impact.crimeRate || 0) + 5;
+            event.impact.stability = (event.impact.stability || 0) - 3;
+        }
+        
+        // 예산 적용
+        if (typeof applyBudgetCost === 'function') {
+            applyBudgetCost(this, actualBudgetCost);
+        } else {
+            // 폴백
+            this.resources.budget = Math.max(0, Math.min(100, this.resources.budget - actualBudgetCost));
+        }
+        
+        // 도시 통계에 영향 적용
+        if (event.impact.crimeRate) {
+            const district = this.districts[event.districtIndex];
+            if (district) {
                 district.crimeLevel = Math.max(0, Math.min(100, 
-                    district.crimeLevel + impact.crimeRate
+                    district.crimeLevel + event.impact.crimeRate
                 ));
-            });
+            }
         }
         
-        // 예산 영향
-        if (impact.budget) {
-            this.resources.budget = Math.max(0, this.resources.budget + impact.budget);
+        if (event.impact.stability) {
+            this.cityStats.stability = Math.max(0, Math.min(100,
+                this.cityStats.stability + event.impact.stability
+            ));
         }
         
-        // 선택에 따른 뉴스 생성
-        this.generateNewsFromChoice(choice);
+        if (event.impact.factionTension) {
+            this.cityStats.factionTension = Math.max(0, Math.min(100,
+                this.cityStats.factionTension + event.impact.factionTension
+            ));
+        }
         
         this.updateCityStats();
-        this.day++;
-        this.generateDailyChoices();
+        return true;
     }
     
-    // 선택지에 따른 뉴스 생성
-    generateNewsFromChoice(choice) {
-        const newsTemplate = NewsTemplates[choice.text];
-        if (!newsTemplate) {
-            // 템플릿이 없으면 기본 뉴스 생성
-            this.addNews({
-                title: `${choice.text} 정책 시행`,
-                content: choice.description || `${choice.text} 정책이 시행되었습니다.`,
-                fullContent: choice.description || `${choice.text} 정책이 시행되었습니다.\n\n이번 정책의 영향이 도시 전반에 미칠 것으로 예상됩니다.`,
-                day: this.day
-            });
-            return;
+    // 인물 ID로 인물 찾기
+    getPersonnelById(personnelId) {
+        // personnelId 형식: "minister", "viceMinister_0", "director_0_0" 등
+        const parts = personnelId.split('_');
+        
+        if (parts[0] === 'minister') {
+            return this.departments.minister;
+        } else if (parts[0] === 'viceMinister') {
+            const index = parseInt(parts[1]);
+            if (this.departments.viceMinisters[index]) {
+                if (parts.length === 2) {
+                    return this.departments.viceMinisters[index];
+                } else if (parts.length === 3) {
+                    const dirIndex = parseInt(parts[2]);
+                    return this.departments.viceMinisters[index].directors[dirIndex];
+                }
+            }
+        }
+        return null;
+    }
+    
+    // 사건 실패 처리 (시간 초과 등)
+    failEvent(eventId) {
+        const event = this.activeEvents.find(e => e.id === eventId);
+        if (!event || event.status !== 'active') {
+            return false;
         }
         
-        // 템플릿에서 뉴스 생성 (동적 값 치환)
-        let fullContent = newsTemplate.fullContent;
-        if (choice.impact.budget) {
-            const budgetAmount = Math.abs(choice.impact.budget);
-            fullContent = fullContent.replace(/\$\{(\d+)\}/g, budgetAmount.toLocaleString());
+        event.status = 'failed';
+        event.resolvedAt = { time: this.time, day: this.day };
+        
+        // 실패 시 영향 증가
+        if (event.impact.crimeRate) {
+            event.impact.crimeRate *= 1.5;
+        }
+        if (event.impact.stability) {
+            event.impact.stability *= 1.5;
         }
         
-        this.addNews({
-            title: newsTemplate.title,
-            content: newsTemplate.content,
-            fullContent: fullContent,
-            day: this.day
+        // 도시 통계에 영향 적용
+        const district = this.districts[event.districtIndex];
+        if (district) {
+            district.crimeLevel = Math.max(0, Math.min(100,
+                district.crimeLevel + (event.impact.crimeRate || 0)
+            ));
+        }
+        
+        this.cityStats.stability = Math.max(0, Math.min(100,
+            this.cityStats.stability + (event.impact.stability || 0)
+        ));
+        
+        this.updateCityStats();
+        return true;
+    }
+    
+    // 오래된 사건 정리 (해결된 사건은 일정 시간 후 제거)
+    cleanupEvents() {
+        const maxAge = 3; // 3일 후 제거
+        this.activeEvents = this.activeEvents.filter(event => {
+            if (event.status === 'active') return true;
+            if (event.status === 'resolved' || event.status === 'failed') {
+                const age = this.day - event.resolvedAt.day;
+                return age < maxAge;
+            }
+            return false;
         });
     }
     
+    // generateDailyChoices() 및 applyChoice() 함수는 제거되었습니다.
+    // 오퍼레이터 활동 화면으로 전환되면서 일일 선택지 시스템이 제거되었습니다.
+    // 파벌 이벤트 시스템이 이를 대체합니다.
+    
+    // 예산 %를 금액으로 변환하는 함수 (나중에 금액 추가 시 사용)
+    // getBudgetAmount(percent) {
+    //     return Math.round(this.resources.budgetAmount * (percent / 100));
+    // }
+    
+    // 선택지에 따른 뉴스 생성
+    // generateNewsFromChoice() 함수는 제거되었습니다.
+    // 일일 선택지 시스템이 제거되면서 더 이상 사용되지 않습니다.
+    // 뉴스는 사건 해결 및 파벌 이벤트에서 생성됩니다.
+    
     // 뉴스 추가 메서드
+    // 뉴스 시스템은 game-content/news/news-system.js에서 관리됩니다.
     addNews(newsData) {
         this.news.push({
             ...newsData,
@@ -279,7 +395,7 @@ class AIAdvisor {
         
         // 확률 계산
         let successRate = 70;
-        if (gameState.resources.budget < 500) successRate -= 20;
+        if (gameState.resources.budget < 20) successRate -= 20; // 예산이 20% 미만이면 위험
         if (gameState.cityStats.stability < 50) successRate -= 15;
         
         recommendations.push(`성공 확률: ${successRate}%`);
@@ -289,11 +405,14 @@ class AIAdvisor {
         if (impact.bigCorp && impact.bigCorp.trust < 0) {
             risks.push(`대기업의 반발 가능성: ${Math.abs(impact.bigCorp.trust * 2)}%`);
         }
-        if (impact.labor && impact.labor.trust < 0) {
-            risks.push(`노조의 반발 가능성: ${Math.abs(impact.labor.trust * 2)}%`);
+        if (impact.immigrants && impact.immigrants.trust < 0) {
+            risks.push(`민족공동체의 반발 가능성: ${Math.abs(impact.immigrants.trust * 2)}%`);
         }
-        if (impact.budget && impact.budget < -500) {
-            risks.push(`예산 부족 위험`);
+        if (impact.samulnori && impact.samulnori.trust < 0) {
+            risks.push(`사물놀이의 반발 가능성: ${Math.abs(impact.samulnori.trust * 2)}%`);
+        }
+        if (impact.budget && impact.budget < -5) {
+            risks.push(`예산 부족 위험 (${Math.abs(impact.budget)}% 소모)`);
         }
         
         if (risks.length > 0) {
@@ -465,7 +584,64 @@ class MapRenderer {
     }
     
     renderEvents(gameState) {
-        // 이벤트는 추후 구현
+        // 활성 사건을 지도에 표시
+        const activeEvents = gameState.activeEvents.filter(e => e.status === 'active');
+        const districtAreas = this.getDistrictAreas();
+        
+        activeEvents.forEach(event => {
+            const districtIndex = event.districtIndex;
+            if (districtIndex < 0 || districtIndex >= districtAreas.length) return;
+            
+            const area = districtAreas[districtIndex];
+            if (!area) return;
+            
+            // 사건 위치 (구역 중앙에서 약간 랜덤)
+            const centerX = area.reduce((sum, p) => sum + p.x, 0) / area.length;
+            const centerY = area.reduce((sum, p) => sum + p.y, 0) / area.length;
+            
+            // 사건 타입에 따른 색상
+            let eventColor = '#ff6b6b';
+            let eventSize = 8;
+            switch(event.type) {
+                case 'small':
+                    eventColor = '#ffd93d';
+                    eventSize = 6;
+                    break;
+                case 'medium':
+                    eventColor = '#ff8c42';
+                    eventSize = 8;
+                    break;
+                case 'large':
+                    eventColor = '#ff6b6b';
+                    eventSize = 10;
+                    break;
+                case 'mega':
+                    eventColor = '#ff0000';
+                    eventSize = 12;
+                    break;
+            }
+            
+            // 사건 마커 그리기 (펄스 효과)
+            const pulse = Math.sin(Date.now() / 500) * 0.3 + 0.7;
+            this.ctx.globalAlpha = pulse;
+            
+            // 외곽 원
+            this.ctx.fillStyle = eventColor;
+            this.ctx.beginPath();
+            this.ctx.arc(centerX, centerY, eventSize + 2, 0, Math.PI * 2);
+            this.ctx.fill();
+            
+            // 내부 원
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.beginPath();
+            this.ctx.arc(centerX, centerY, eventSize, 0, Math.PI * 2);
+            this.ctx.fill();
+            
+            this.ctx.globalAlpha = 1.0;
+            
+            // 사건 제목 표시 (호버 시)
+            // TODO: 마우스 호버 이벤트 추가
+        });
     }
 }
 
@@ -476,17 +652,35 @@ class Game {
         this.mapCanvas = document.getElementById('cityMap');
         this.mapRenderer = new MapRenderer(this.mapCanvas);
         this.selectedChoice = null;
+        this.operatorActivity = null;
+        this.operatorTimeInterval = null;
+        
+        // showEventResponseOptions를 전역으로 노출 (operator-ui.js에서 사용)
+        // this를 바인딩하기 위해 화살표 함수 사용
+        const gameInstance = this;
+        window.showEventResponseOptions = (event) => {
+            if (typeof showEventResponseOptionsUI === 'function') {
+                showEventResponseOptionsUI(
+                    event,
+                    gameInstance.state,
+                    (eventId, responseType, personnelId) => {
+                        gameInstance.handleEventResponse(eventId, responseType, personnelId);
+                    },
+                    () => {
+                        gameInstance.closeEventResponseOverlay();
+                    }
+                );
+            } else {
+                console.error('showEventResponseOptionsUI 함수가 로드되지 않았습니다.');
+            }
+        };
         
         this.init();
     }
     
     init() {
-        // 초기 선택지 생성
-        this.state.generateDailyChoices();
-        
         // UI 업데이트
         this.updateUI();
-        this.renderChoices();
         this.renderNews();
         
         // 배경 이미지 설정 (이미지 파일 경로를 여기에 설정)
@@ -497,6 +691,9 @@ class Game {
         
         // 이벤트 리스너
         this.setupEventListeners();
+        
+        // 오퍼레이터 활동 시작 (게임 시작 시 바로)
+        this.startOperatorActivity();
     }
     
     // 배경 이미지 설정 메서드 (외부에서 호출 가능)
@@ -505,21 +702,6 @@ class Game {
     }
     
     setupEventListeners() {
-        const confirmBtn = document.getElementById('confirmBtn');
-        const choicesContainer = document.getElementById('choicesContainer');
-        
-        // 선택지 버튼 생성
-        this.renderChoices();
-        
-        // 확정 버튼
-        confirmBtn.addEventListener('click', () => {
-            if (this.selectedChoice !== null) {
-                this.confirmChoice();
-            } else {
-                alert('선택지를 먼저 클릭해주세요.');
-            }
-        });
-        
         // 아이콘 박스 클릭 이벤트
         this.setupIconBoxListeners();
         
@@ -623,133 +805,269 @@ class Game {
     }
     
     getInfoData(infoId) {
-        // 각 아이콘 박스별 정보 데이터 (차후 확장)
-        const infoTemplates = [
-            {
-                title: "도시 통계",
-                sections: [
-                    {
-                        title: "현재 상태",
-                        text: `Day ${this.state.day} - 도시 관리 현황`,
-                        description: "도시의 전반적인 통계 정보를 확인할 수 있습니다."
-                    },
-                    {
-                        title: "안정도 그래프",
-                        graph: true,
-                        description: "도시 안정도 추이를 그래프로 확인합니다."
-                    }
-                ]
-            },
-            {
-                title: "파벌 관계",
-                sections: [
-                    {
-                        title: "파벌 현황",
-                        text: "각 파벌의 신뢰도와 긴장도를 확인할 수 있습니다.",
-                        description: "파벌 간의 관계를 분석합니다."
-                    }
-                ]
-            },
-            {
-                title: "구역 정보",
-                sections: [
-                    {
-                        title: "도시 구역",
-                        text: "6개 구역의 상세 정보를 확인할 수 있습니다.",
-                        description: "각 구역의 범죄율과 특성을 분석합니다."
-                    }
-                ]
-            },
-            {
-                title: "자원 현황",
-                sections: [
-                    {
-                        title: "자원 관리",
-                        text: `예산: ${this.state.resources.budget.toLocaleString()}\n인력: ${this.state.resources.personnel}\n장비: ${this.state.resources.equipment}`,
-                        description: "현재 보유 자원을 확인합니다."
-                    }
-                ]
-            },
-            {
-                title: "부서 정보",
-                sections: [
-                    {
-                        title: "치안부 구조",
-                        text: "치안부의 조직 구조와 인물 정보를 확인할 수 있습니다.",
-                        description: "장관, 차관, 부장들의 효율성을 확인합니다."
-                    }
-                ]
-            }
-        ];
+        // 아이콘 정보는 game-content/icons/ 폴더의 별도 파일에서 로드됩니다.
+        // 동적 정보가 필요한 경우 함수를 호출하고, 정적 정보는 객체를 직접 사용합니다.
+        switch(infoId) {
+            case 0: // 도시 통계
+                if (typeof getCityStatsInfo === 'function') {
+                    return getCityStatsInfo(this.state);
+                }
+                break;
+            case 1: // 파벌 관계
+                if (typeof FactionRelationsInfo !== 'undefined') {
+                    return FactionRelationsInfo;
+                }
+                break;
+            case 2: // 구역 정보
+                if (typeof getDistrictInfo === 'function') {
+                    return getDistrictInfo(this.state);
+                }
+                break;
+            case 3: // 자원 현황
+                if (typeof getResourcesInfo === 'function') {
+                    return getResourcesInfo(this.state);
+                }
+                break;
+            case 4: // 부서 정보
+                if (typeof DepartmentInfo !== 'undefined') {
+                    return DepartmentInfo;
+                }
+                break;
+        }
         
-        return infoTemplates[infoId] || {
-            title: "정보",
-            sections: [{
-                text: "정보를 불러올 수 없습니다."
-            }]
+        // 기본값 (파일이 로드되지 않은 경우)
+        // 메시지는 game-content/messages.js에서 로드됩니다.
+        return (typeof GameMessages !== 'undefined' && GameMessages.infoUnavailable)
+            ? GameMessages.infoUnavailable
+            : {
+                title: "정보",
+                sections: [{
+                    text: "정보를 불러올 수 없습니다."
+                }]
+            };
+    }
+    
+    // 선택지 관련 함수들은 제거 (오퍼레이터 화면을 메인으로 사용)
+    
+    // 오퍼레이터 활동 시작
+    startOperatorActivity() {
+        // 오퍼레이터 활동 초기화
+        this.operatorActivity = {
+            startTime: this.state.time,
+            endTime: 18, // 18시까지 활동
+            isActive: true
         };
+        
+        // 초기 사건 생성
+        this.state.generateEvents();
+        
+        // 오퍼레이터 화면 업데이트
+        this.updateOperatorUI();
+        this.renderOperatorEvents();
+        
+        // 시간 진행 시작 (1시간씩) - 수동 진행으로 변경
+        // this.operatorTimeInterval = setInterval(() => {
+        //     this.advanceOperatorTime();
+        // }, 10000); // 10초마다 1시간 진행 (자동 진행)
+        
+        // 오퍼레이터 이벤트 리스너 설정
+        this.setupOperatorListeners();
     }
     
-    renderChoices() {
-        const container = document.getElementById('choicesContainer');
-        container.innerHTML = '';
+    // 오퍼레이터 시간 진행
+    advanceOperatorTime() {
+        if (!this.operatorActivity || !this.operatorActivity.isActive) {
+            return;
+        }
         
-        this.state.currentChoices.forEach((choice, index) => {
-            const button = document.createElement('button');
-            button.className = 'choice';
-            button.textContent = choice.text;
-            button.dataset.index = index;
-            
-            button.addEventListener('mouseenter', () => {
-                this.showAIResponse(choice);
-            });
-            
-            button.addEventListener('click', () => {
-                // 이전 선택 해제
-                document.querySelectorAll('.choice').forEach(btn => {
-                    btn.classList.remove('selected');
-                });
-                button.classList.add('selected');
-                this.selectedChoice = index;
-                this.showAIResponse(choice);
-            });
-            
-            container.appendChild(button);
-        });
+        // 1시간 진행
+        this.state.advanceTime(1);
+        
+        // 사건 발생 확인
+        this.state.generateEvents();
+        
+        // 파벌 이벤트 발생 확인
+        const factionEvent = this.state.generateFactionEvent();
+        if (factionEvent) {
+            // 파벌 이벤트 표시
+            this.showFactionEvent(factionEvent);
+        }
+        
+        // 오퍼레이터 화면 업데이트
+        this.updateOperatorUI();
+        this.renderOperatorEvents();
+        this.updateUI(); // 상단 정보 패널도 업데이트
+        
+        // 활동 종료 시간 체크
+        if (this.state.time >= this.operatorActivity.endTime) {
+            this.endOperatorActivity();
+        }
     }
     
-    showAIResponse(choice) {
-        const aiResponse = document.getElementById('aiResponse');
-        const recommendation = AIAdvisor.generateRecommendation(this.state, choice);
+    // 오퍼레이터 활동 종료
+    endOperatorActivity() {
+        if (this.operatorTimeInterval) {
+            clearInterval(this.operatorTimeInterval);
+            this.operatorTimeInterval = null;
+        }
         
-        let response = `${choice.description}\n\n`;
-        response += `분석: ${recommendation}`;
+        if (this.operatorActivity) {
+            this.operatorActivity.isActive = false;
+        }
         
-        aiResponse.textContent = response;
-    }
-    
-    confirmChoice() {
-        if (this.selectedChoice === null) return;
+        // 오래된 사건 정리
+        this.state.cleanupEvents();
         
-        // 글리치 효과 시작
+        // 날짜 증가 (다음 날로)
+        this.state.day++;
+        this.state.time = 8; // 다음 날 8시부터 시작
+        
+        // 다음 날 시작 - 오퍼레이터 활동 재시작
         this.showGlitchTransition(() => {
-            // 전환 완료 후 선택 적용
-            this.state.applyChoice(this.selectedChoice);
-            this.selectedChoice = null;
-            
             // UI 업데이트
             this.updateUI();
-            this.renderChoices();
             this.renderNews();
             
-            // AI 응답 초기화
-            document.getElementById('aiResponse').textContent = '';
+            // 오퍼레이터 활동 재시작
+            this.startOperatorActivity();
             
             // 다음 날 알림
             setTimeout(() => {
-                alert(`Day ${this.state.day} 시작!\n새로운 선택지가 생성되었습니다.`);
+                // 메시지는 game-content/messages.js에서 로드됩니다.
+                const message = (typeof GameMessages !== 'undefined' && GameMessages.operatorStart)
+                    ? GameMessages.operatorStart(this.state.day)
+                    : `Day ${this.state.day} 시작!\n오퍼레이터 활동을 시작합니다.`;
+                alert(message);
             }, 100);
         });
+    }
+    
+    // 오퍼레이터 UI 업데이트
+    // 오퍼레이터 UI 업데이트
+    // 오퍼레이터 UI 렌더링은 game-content/operator/operator-ui.js에서 관리됩니다.
+    updateOperatorUI() {
+        if (typeof updateOperatorUI === 'function') {
+            updateOperatorUI(this.state, this.operatorActivity);
+        }
+    }
+    
+    // 오퍼레이터 사건 목록 렌더링
+    // 오퍼레이터 UI 렌더링은 game-content/operator/operator-ui.js에서 관리됩니다.
+    renderOperatorEvents() {
+        if (typeof renderOperatorEventsList === 'function') {
+            renderOperatorEventsList(this.state);
+        }
+    }
+    
+    // 사건 대응 선택지 표시
+    
+    // 사건 대응 처리
+    handleEventResponse(eventId, responseType) {
+        const event = this.state.activeEvents.find(e => e.id === eventId);
+        if (!event || event.status !== 'active') {
+            this.closeEventResponseOverlay();
+            return;
+        }
+        
+        // 예산 확인
+        // 예산 시스템은 game-content/budget/budget-system.js에서 관리됩니다.
+        let cost = 0;
+        if (typeof calculateEventBudgetCost === 'function') {
+            // 선택된 인물 가져오기
+            const personnelSelect = document.querySelector('.event-response-personnel');
+            let personnel = null;
+            if (personnelSelect && personnelSelect.value) {
+                personnel = this.state.getPersonnelById(personnelSelect.value);
+            }
+            cost = calculateEventBudgetCost(event, responseType, personnel);
+        } else {
+            // 폴백
+            cost = event.budgetCost;
+            if (responseType === 'drone') cost = event.budgetCost * 1.2;
+            else if (responseType === 'cctv') cost = event.budgetCost * 0.5;
+            else if (responseType === 'ignore') cost = 0;
+        }
+        
+        if (typeof checkBudgetSufficient === 'function') {
+            if (!checkBudgetSufficient(this.state, cost) && responseType !== 'ignore') {
+                // 메시지는 game-content/messages.js에서 로드됩니다.
+                const message = (typeof GameMessages !== 'undefined' && GameMessages.budgetInsufficient)
+                    ? GameMessages.budgetInsufficient
+                    : '예산이 부족합니다!';
+                alert(message);
+                return;
+            }
+        } else {
+            // 폴백
+            if (cost > this.state.resources.budget && responseType !== 'ignore') {
+                // 메시지는 game-content/messages.js에서 로드됩니다.
+                const message = (typeof GameMessages !== 'undefined' && GameMessages.budgetInsufficient)
+                    ? GameMessages.budgetInsufficient
+                    : '예산이 부족합니다!';
+                alert(message);
+                return;
+            }
+        }
+        
+        // 선택된 인물 가져오기
+        const personnelSelect = document.querySelector('.event-response-personnel');
+        const personnelId = personnelSelect ? personnelSelect.value : null;
+        
+        // 사건 해결
+        const success = this.state.resolveEvent(eventId, responseType, personnelId);
+        
+        if (success) {
+            // 오버레이 닫기
+            this.closeEventResponseOverlay();
+            
+            // UI 업데이트
+            this.renderOperatorEvents();
+            this.updateOperatorUI();
+            this.updateUI();
+            
+            // 결과 메시지
+            // ResponseNames는 game-content/event-responses.js에서 로드됩니다.
+            const responseName = (typeof ResponseNames !== 'undefined' && ResponseNames[responseType])
+                ? ResponseNames[responseType]
+                : responseType;
+            
+            setTimeout(() => {
+                // 메시지는 game-content/messages.js에서 로드됩니다.
+                const message = (typeof GameMessages !== 'undefined' && GameMessages.eventResolved)
+                    ? GameMessages.eventResolved(responseName, cost)
+                    : `사건 처리 완료!\n\n대응 방법: ${responseName}\n예산 소모: ${cost.toFixed(1)}%`;
+                alert(message);
+            }, 100);
+        }
+    }
+    
+    // 사건 대응 오버레이 닫기
+    // 사건 대응 오버레이 닫기
+    // 사건 대응 UI는 game-content/events/event-response-ui.js에서 관리됩니다.
+    closeEventResponseOverlay() {
+        if (typeof closeEventResponseOverlay === 'function') {
+            closeEventResponseOverlay();
+        }
+    }
+    
+    // 오퍼레이터 이벤트 리스너 설정
+    setupOperatorListeners() {
+        const skipTimeBtn = document.getElementById('skipTimeBtn');
+        const endOperatorBtn = document.getElementById('endOperatorBtn');
+        
+        if (skipTimeBtn) {
+            skipTimeBtn.addEventListener('click', () => {
+                // 시간을 1시간 건너뛰기
+                this.advanceOperatorTime();
+            });
+        }
+        
+        if (endOperatorBtn) {
+            endOperatorBtn.addEventListener('click', () => {
+                // 활동 종료
+                this.endOperatorActivity();
+            });
+        }
     }
     
     // 글리치 전환 효과 표시
@@ -844,278 +1162,48 @@ class Game {
             Math.round(this.state.cityStats.stability) + '%';
         document.getElementById('crimeRateDisplay').textContent = 
             Math.round(this.state.cityStats.crimeRate) + '%';
-        document.getElementById('budgetDisplay').textContent = 
-            this.state.resources.budget.toLocaleString();
-    }
-    
-    renderNews() {
-        const newsContainer = document.getElementById('newsContainer');
-        if (!newsContainer) return;
-        
-        newsContainer.innerHTML = '';
-        
-        // 오늘 날짜의 뉴스와 상태 기반 뉴스 가져오기
-        const todayNews = this.state.news.filter(n => n.day === this.state.day);
-        
-        // 상태 기반 자동 뉴스 추가 (선택지 뉴스가 없을 때 기본 뉴스)
-        if (todayNews.length === 0) {
-            // 기본 상태 뉴스
-            const statusNews = [
-                {
-                    title: "도시 안정도 보고",
-                    content: `현재 도시 안정도는 ${Math.round(this.state.cityStats.stability)}%입니다.`,
-                    fullContent: `현재 도시 안정도는 ${Math.round(this.state.cityStats.stability)}%입니다.\n\n도시의 전반적인 안정 상태를 나타내는 지표입니다.`,
-                    day: this.state.day
-                },
-                {
-                    title: "범죄율 현황",
-                    content: `전체 범죄율은 ${Math.round(this.state.cityStats.crimeRate)}%로 집계되었습니다.`,
-                    fullContent: `전체 범죄율은 ${Math.round(this.state.cityStats.crimeRate)}%로 집계되었습니다.\n\n각 구역별 범죄 발생 현황을 종합한 수치입니다.`,
-                    day: this.state.day
-                }
-            ];
-            
-            // 긴장도가 높은 파벌 뉴스 추가
-            Object.keys(this.state.factions).forEach(factionKey => {
-                const faction = this.state.factions[factionKey];
-                if (faction.tension > 50) {
-                    statusNews.push({
-                        title: `${faction.name} 긴장도 상승`,
-                        content: `${faction.name}의 긴장도가 ${faction.tension}%로 높은 수준입니다.`,
-                        fullContent: `${faction.name}의 긴장도가 ${faction.tension}%로 높은 수준입니다.\n\n이에 대한 대응이 필요할 수 있습니다.`,
-                        day: this.state.day
-                    });
-                }
-            });
-            
-            todayNews.push(...statusNews);
-        }
-        
-        // 최신 뉴스 5개만 표시 (최신순)
-        const recentNews = todayNews.slice(-5).reverse();
-        
-        if (recentNews.length === 0) {
-            const noNews = document.createElement('div');
-            noNews.className = 'news-item';
-            noNews.style.textAlign = 'center';
-            noNews.style.color = '#888';
-            noNews.textContent = '오늘의 뉴스가 없습니다.';
-            newsContainer.appendChild(noNews);
-            return;
-        }
-        
-        recentNews.forEach(news => {
-            const newsItem = document.createElement('div');
-            newsItem.className = 'news-item';
-            newsItem.style.cursor = 'pointer';
-            
-            const title = document.createElement('div');
-            title.className = 'news-title';
-            title.textContent = news.title;
-            newsItem.appendChild(title);
-            
-            const content = document.createElement('div');
-            content.className = 'news-content';
-            content.textContent = news.content;
-            newsItem.appendChild(content);
-            
-            const time = document.createElement('div');
-            time.className = 'news-time';
-            time.textContent = `${news.day}일차`;
-            newsItem.appendChild(time);
-            
-            // 클릭 시 상세 내용 표시
-            newsItem.addEventListener('click', () => {
-                this.showNewsDetail(news);
-            });
-            
-            newsContainer.appendChild(newsItem);
-        });
-    }
-    
-    // 뉴스 상세 내용 표시
-    showNewsDetail(news) {
-        const overlay = document.getElementById('infoOverlay');
-        const panelBody = document.getElementById('infoPanelBody');
-        const panelTitle = document.getElementById('infoPanelTitle');
-        
-        if (!overlay || !panelBody) return;
-        
-        panelTitle.textContent = news.title;
-        panelBody.innerHTML = '';
-        
-        const sectionDiv = document.createElement('div');
-        sectionDiv.className = 'info-section';
-        
-        const fullContent = document.createElement('p');
-        fullContent.textContent = news.fullContent || news.content || '상세 내용이 없습니다.';
-        fullContent.style.whiteSpace = 'pre-line';
-        sectionDiv.appendChild(fullContent);
-        
-        if (news.image) {
-            const img = document.createElement('img');
-            img.className = 'info-image';
-            img.src = news.image;
-            img.alt = news.title;
-            sectionDiv.appendChild(img);
-        }
-        
-        panelBody.appendChild(sectionDiv);
-        overlay.classList.add('active');
-    }
-    
-    renderCharacters() {
-        // 플레이어 (도시 관리자) 렌더링
-        const playerContainer = document.getElementById('playerContainer');
-        playerContainer.innerHTML = '';
-        const player = this.state.player;
-        if (player) {
-            const playerCard = this.createPlayerCard(player);
-            playerContainer.appendChild(playerCard);
-        }
-        
-        // 치안부 장관 렌더링
-        const ministerContainer = document.getElementById('ministerContainer');
-        ministerContainer.innerHTML = '';
-        const minister = this.state.departments.minister;
-        if (minister) {
-            ministerContainer.appendChild(this.createCharacterCard(minister, 'minister'));
-        }
-        
-        // 차관 렌더링
-        const viceMinistersContainer = document.getElementById('viceMinistersContainer');
-        viceMinistersContainer.innerHTML = '';
-        this.state.departments.viceMinisters.forEach(vm => {
-            viceMinistersContainer.appendChild(this.createCharacterCard(vm, 'viceMinister'));
-        });
-        
-        // 부장 렌더링 (각 차관별 부장들)
-        const directorsContainer = document.getElementById('directorsContainer');
-        directorsContainer.innerHTML = '';
-        this.state.departments.viceMinisters.forEach(vm => {
-            if (vm.directors) {
-                vm.directors.forEach(dir => {
-                    directorsContainer.appendChild(this.createCharacterCard(dir, 'director'));
-                });
-            }
-        });
-    }
-    
-    createPlayerCard(player) {
-        const card = document.createElement('div');
-        card.className = 'character-card';
-        card.style.border = '3px solid #6bcf7f';
-        card.style.background = '#1a2e1a';
-        
-        const name = document.createElement('div');
-        name.className = 'character-name';
-        name.textContent = player.name;
-        name.style.color = '#6bcf7f';
-        card.appendChild(name);
-        
-        const role = document.createElement('div');
-        role.className = 'character-role';
-        role.textContent = player.role;
-        role.style.color = '#4a9eff';
-        card.appendChild(role);
-        
-        // 권한 표시
-        const authorityContainer = document.createElement('div');
-        authorityContainer.className = 'character-stats';
-        const authorityLabel = document.createElement('span');
-        authorityLabel.textContent = '권한:';
-        authorityContainer.appendChild(authorityLabel);
-        const authorityValue = document.createElement('span');
-        authorityValue.textContent = `${player.authority}%`;
-        authorityValue.style.color = '#6bcf7f';
-        authorityContainer.appendChild(authorityValue);
-        card.appendChild(authorityContainer);
-        
-        // 권한 바
-        const statBar = document.createElement('div');
-        statBar.className = 'stat-bar';
-        const statBarFill = document.createElement('div');
-        statBarFill.className = 'stat-bar-fill';
-        statBarFill.style.width = `${player.authority}%`;
-        statBar.appendChild(statBarFill);
-        card.appendChild(statBar);
-        
-        // 클릭 이벤트
-        card.addEventListener('click', () => {
-            alert(`${player.name} (${player.role})\n\n권한: ${player.authority}%\n\n도시 전체를 관리하는 최고 책임자입니다.`);
-        });
-        
-        return card;
-    }
-    
-    createCharacterCard(character, type) {
-        const card = document.createElement('div');
-        card.className = 'character-card';
-        
-        const name = document.createElement('div');
-        name.className = 'character-name';
-        name.textContent = character.name;
-        card.appendChild(name);
-        
-        const role = document.createElement('div');
-        role.className = 'character-role';
-        role.textContent = character.role;
-        card.appendChild(role);
-        
-        // 효율성 표시
-        const efficiencyContainer = document.createElement('div');
-        efficiencyContainer.className = 'character-stats';
-        const efficiencyLabel = document.createElement('span');
-        efficiencyLabel.textContent = '효율성:';
-        efficiencyContainer.appendChild(efficiencyLabel);
-        const efficiencyValue = document.createElement('span');
-        efficiencyValue.textContent = `${character.efficiency}%`;
-        efficiencyValue.style.color = character.efficiency >= 70 ? '#2ed573' : 
-                                      character.efficiency >= 50 ? '#ffb800' : '#ff6b6b';
-        efficiencyContainer.appendChild(efficiencyValue);
-        card.appendChild(efficiencyContainer);
-        
-        // 효율성 바
-        const statBar = document.createElement('div');
-        statBar.className = 'stat-bar';
-        const statBarFill = document.createElement('div');
-        statBarFill.className = 'stat-bar-fill';
-        statBarFill.style.width = `${character.efficiency}%`;
-        statBar.appendChild(statBarFill);
-        card.appendChild(statBar);
-        
-        // 파벌 배지
-        if (character.faction) {
-            const faction = this.state.factions[character.faction];
-            if (faction) {
-                const badge = document.createElement('span');
-                badge.className = `faction-badge ${character.faction}`;
-                badge.textContent = faction.name;
-                card.appendChild(badge);
+        // 예산 표시는 game-content/budget/budget-system.js에서 관리됩니다.
+        const budgetDisplay = document.getElementById('budgetDisplay');
+        if (budgetDisplay) {
+            if (typeof formatBudgetDisplay === 'function') {
+                budgetDisplay.textContent = formatBudgetDisplay(this.state);
+            } else {
+                // 폴백
+                budgetDisplay.textContent = Math.round(this.state.resources.budget) + '%';
             }
         }
         
-        // 클릭 이벤트 (추후 상세 정보 표시용)
-        card.addEventListener('click', () => {
-            this.showCharacterDetails(character, type);
-        });
-        
-        return card;
-    }
-    
-    showCharacterDetails(character, type) {
-        let details = `${character.name} (${character.role})\n\n`;
-        details += `효율성: ${character.efficiency}%\n`;
-        if (character.faction) {
-            const faction = this.state.factions[character.faction];
-            details += `파벌: ${faction.name}\n`;
-            details += `파벌 신뢰도: ${faction.trust}%\n`;
-            details += `파벌 긴장도: ${faction.tension}%`;
+        // 시간 표시는 game-content/time/time-system.js에서 관리됩니다.
+        if (typeof updateTimeDisplay === 'function') {
+            updateTimeDisplay(this.state);
         } else {
-            details += `파벌: 중립`;
+            // 폴백
+            const timeDisplay = document.getElementById('timeDisplay');
+            if (timeDisplay) {
+                const timeText = `Day ${this.state.day} - ${this.state.time}시`;
+                const timeDescription = this.state.getTimeDescription();
+                timeDisplay.textContent = timeText;
+                timeDisplay.title = timeDescription;
+            }
         }
-        alert(details);
     }
+    
+    // 뉴스 렌더링 함수
+    // 뉴스 시스템은 game-content/news/news-system.js에서 관리됩니다.
+    renderNews() {
+        if (typeof renderNews === 'function') {
+            renderNews(this.state, this);
+        }
+    }
+    
+      // 뉴스 상세 내용 표시
+    // 뉴스 시스템은 game-content/news/news-system.js에서 관리됩니다.
+    showNewsDetail(news) {
+        if (typeof showNewsDetail === 'function') {
+            showNewsDetail(news);
+        }
+    }
+    
     
     gameLoop() {
         this.mapRenderer.render(this.state);
