@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>솟대쟁이 오퍼레이터 화면</title>
+  <title></title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,6 +34,10 @@
               <span class="stat-label">예산</span>
               <span class="stat-value" id="budgetDisplay">10,000</span>
             </div>
+            <div class="stat-item">
+              <span class="stat-label">시간</span>
+              <span class="stat-value" id="timeDisplay">8시</span>
+            </div>
           </div>
         </div>
         <div class="news-panel">
@@ -58,14 +62,26 @@
           <canvas id="cityMap" width="800" height="300"></canvas>
         </div>
 
-        <!-- 선택지 영역 -->
-        <div class="choice-area">
-          <h3>오늘의 선택</h3>
-          <div class="choices" id="choicesContainer">
-            <!-- 선택지는 동적으로 생성됩니다 -->
+        <!-- 오퍼레이터 활동 영역 (메인 화면) -->
+        <div class="operator-area" id="operatorArea">
+          <h3>오퍼레이터 활동</h3>
+          <div class="operator-info">
+            <div class="operator-time">
+              <span>현재 시간: <span id="operatorTimeDisplay">8시</span></span>
+              <span>활동 종료: <span id="operatorEndTime">18시</span></span>
+            </div>
+            <div class="operator-stats">
+              <span>활성 사건: <span id="activeEventsCount">0</span>개</span>
+              <span>해결 사건: <span id="resolvedEventsCount">0</span>개</span>
+            </div>
           </div>
-          <div id="aiResponse" class="response"></div>
-          <button id="confirmBtn" class="confirm">선택 확정</button>
+          <div class="operator-events" id="operatorEventsList">
+            <!-- 활성 사건 목록이 표시됩니다 -->
+          </div>
+          <div class="operator-actions">
+            <button id="skipTimeBtn" class="operator-btn">1시간 진행</button>
+            <button id="endOperatorBtn" class="operator-btn">활동 종료 (18시까지)</button>
+          </div>
         </div>
       </div>
     </div>
@@ -93,6 +109,61 @@
     </div>
   </div>
 
+  <!-- 사건 대응 선택지 오버레이 -->
+  <div id="eventResponseOverlay" class="event-response-overlay">
+    <div class="event-response-panel">
+      <div class="event-response-header">
+        <h2 id="eventResponseTitle">사건 대응</h2>
+        <button class="event-response-close" id="eventResponseCloseBtn">×</button>
+      </div>
+      <div class="event-response-content">
+        <div class="event-response-info" id="eventResponseInfo">
+          <!-- 사건 정보가 표시됩니다 -->
+        </div>
+        <div class="event-response-options" id="eventResponseOptions">
+          <!-- 대응 선택지가 표시됩니다 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 게임 핵심 데이터 -->
+  <script src="game-content/core/factions.js"></script>
+  <script src="game-content/core/initial-values.js"></script>
+  <script src="game-content/core/department-content.js"></script>
+  <script src="game-content/core/districts.js"></script>
+  <script src="game-content/core/messages.js"></script>
+  
+  <!-- 사건 시스템 -->
+  <script src="game-content/events/event-types.js"></script>
+  <script src="game-content/events/event-templates.js"></script>
+  <script src="game-content/events/event-responses.js"></script>
+  <script src="game-content/events/faction-events.js"></script>
+  <script src="game-content/events/event-response-ui.js"></script>
+  
+  <!-- 아이콘 정보 파일들 -->
+  <script src="game-content/icons/city-stats.js"></script>
+  <script src="game-content/icons/faction-relations.js"></script>
+  <script src="game-content/icons/district-info.js"></script>
+  <script src="game-content/icons/resources.js"></script>
+  <script src="game-content/icons/department-info.js"></script>
+  
+  <!-- 뉴스 시스템 -->
+  <script src="game-content/news/news-templates.js"></script>
+  <script src="game-content/news/status-news.js"></script>
+  <script src="game-content/news/news-system.js"></script>
+  
+  
+  <!-- 시간 시스템 -->
+  <script src="game-content/time/time-system.js"></script>
+  
+  <!-- 오퍼레이터 UI -->
+  <script src="game-content/operator/operator-ui.js"></script>
+  
+  <!-- 예산 시스템 -->
+  <script src="game-content/budget/budget-system.js"></script>
+  
+  <!-- 메인 게임 로직 -->
   <script src="js/Sotdaejaengi.js"></script>
 </body>
 </html>
