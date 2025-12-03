@@ -38,6 +38,7 @@ body {
 }
 
 .center-content {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -58,9 +59,42 @@ body {
 
 .stats {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 15px;
+    row-gap: 15px;
+    position: relative;
+}
+
+/* 첫 줄과 둘째 줄 사이 구분선 (디지털 시계 스타일) */
+.stats::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 50%;
+    height: 1px;
+    background: #4a9eff;
+    z-index: 1;
+}
+
+/* 첫 줄: 3개 아이템 */
+.stats .stat-item:nth-child(1),
+.stats .stat-item:nth-child(2),
+.stats .stat-item:nth-child(3) {
+    flex: 0 0 calc(33.333% - 10px);
+    max-width: calc(33.333% - 10px);
+    position: relative;
+    z-index: 2;
+}
+
+/* 둘째 줄: 2개 아이템 (중앙 정렬) */
+.stats .stat-item:nth-child(4),
+.stats .stat-item:nth-child(5) {
+    flex: 0 0 calc(50% - 7.5px);
+    max-width: calc(50% - 7.5px);
+    position: relative;
+    z-index: 2;
 }
 
 .stat-item {
@@ -92,6 +126,7 @@ body {
     margin-bottom: 30px;
     width: 100%;
     max-width: 800px;
+    margin-right: 290px; /* 시간대 표시 창과 겹치지 않도록 여백 추가 */
     text-align: center;
 }
 
@@ -106,6 +141,142 @@ body {
         -1px 1px 0 #000;
     font-family: 'Courier New', monospace;
 }
+
+/* 시간대 이미지 표시 창 (center-content 오른쪽 상단) */
+.time-display-window {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 270px;
+    height: calc((100vh - 300px) * 0.67 - 40px);
+    max-height: calc((100vh - 300px) * 0.67 - 40px);
+    background: #0a0a0a;
+    border: 3px solid #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 20px rgba(74, 158, 255, 0.3);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.time-display-image {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease;
+    background-color: #1a1a1a;
+}
+
+/* 시간대별 기본 배경 색상 (이미지가 없을 때) */
+/* 새벽 (0-5시) - 어두운 파란색, 달 */
+.time-display-image.period-dawn {
+    background: linear-gradient(180deg, #0a0a2e 0%, #1a1a3a 50%, #2d2d4a 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-dawn::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    right: 20%;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, #ffffff 0%, #ffffff40 50%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+/* 오전 (6-11시) - 밝은 노란색, 해 */
+.time-display-image.period-morning {
+    background: linear-gradient(180deg, #ffd700 0%, #ffd89b 50%, #ffecd2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-morning::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, #ffff00 0%, #ffd700 50%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+
+/* 오후 (12-16시) - 하늘색, 큰 해 */
+.time-display-image.period-afternoon {
+    background: linear-gradient(180deg, #87ceeb 0%, #b0e0e6 50%, #e0f6ff 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-afternoon::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle, #ffff00 0%, #ffd700 50%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.9);
+}
+
+/* 저녁 (17-20시) - 주황색, 석양 */
+.time-display-image.period-evening {
+    background: linear-gradient(180deg, #ff6b35 0%, #ff9a56 50%, #ffad56 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-evening::before {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, #ff8c42 0%, #ff6b35 50%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 25px rgba(255, 140, 66, 0.7);
+}
+
+/* 밤 (21-23시) - 어두운 색, 별들 */
+.time-display-image.period-night {
+    background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-night::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    right: 25%;
+    width: 8px;
+    height: 8px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.8),
+        80px 30px 0 2px #ffffff,
+        120px 20px 0 2px #ffffff,
+        60px 50px 0 1.5px #ffffff,
+        140px 60px 0 1.5px #ffffff;
+}
+
 
 #cityMap {
     display: block;
@@ -1193,4 +1364,219 @@ body {
     color: #ffd93d;
     font-size: 0.8rem;
     margin-top: 5px;
+}
+
+/* 파벌 이벤트 오버레이 */
+.faction-event-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    font-family: 'Courier New', monospace;
+}
+
+.faction-event-overlay.active {
+    display: flex;
+}
+
+.faction-event-panel {
+    background: #050608;
+    border: 3px solid #ff6b6b;
+    padding: 30px;
+    max-width: 800px;
+    width: 95%;
+    max-height: 85vh;
+    box-shadow:
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 35px rgba(255, 107, 107, 0.6);
+    display: flex;
+    flex-direction: column;
+}
+
+.faction-event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #4a9eff;
+    padding-bottom: 10px;
+}
+
+.faction-event-header h2 {
+    color: #ff6b6b;
+    font-size: 1.6rem;
+    text-shadow:
+        2px 2px 0 #000,
+        -1px -1px 0 #000;
+}
+
+.faction-event-close {
+    background: transparent;
+    border: 2px solid #ff6b6b;
+    color: #ff6b6b;
+    width: 35px;
+    height: 35px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    transition: all 0.2s;
+    box-shadow:
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+}
+
+.faction-event-close:hover {
+    background: #ff6b6b;
+    color: #050608;
+    box-shadow:
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 15px #ff6b6b;
+}
+
+.faction-event-body {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 20px;
+}
+
+.faction-event-character {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background: #090b10;
+    border: 2px solid #4a9eff;
+}
+
+.faction-event-portrait {
+    width: 200px;
+    height: 260px;
+    border-radius: 8px;
+    background: radial-gradient(circle at 20% 20%, #ffffff22, transparent 60%), #111827;
+    border: 2px solid #ff6b6b;
+    box-shadow:
+        0 0 25px rgba(255, 107, 107, 0.4),
+        inset 0 0 15px rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffffcc;
+    font-size: 2.4rem;
+    font-weight: 700;
+    text-shadow:
+        2px 2px 0 #000,
+        0 0 15px #ff6b6b;
+    background-size: cover;
+    background-position: center;
+}
+
+.faction-event-meta {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.faction-event-faction {
+    color: #4a9eff;
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+}
+
+.faction-event-representative {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.faction-event-dialogue-area {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.faction-event-dialogue-text {
+    min-height: 140px;
+    padding: 15px 18px;
+    background: #0b0f16;
+    border: 2px solid #4a9eff;
+    color: #e5e7eb;
+    line-height: 1.7;
+    font-size: 0.95rem;
+    position: relative;
+}
+
+.faction-event-dialogue-text::before {
+    content: '▶';
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    color: #4a9eff;
+    font-size: 0.8rem;
+}
+
+.faction-event-dialogue-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.faction-event-btn {
+    padding: 10px 18px;
+    background: #111827;
+    color: #e5e7eb;
+    border: 2px solid #4a9eff;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    box-shadow:
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000;
+    transition: all 0.2s;
+}
+
+.faction-event-btn.primary {
+    border-color: #6bcf7f;
+    color: #6bcf7f;
+}
+
+.faction-event-btn:hover {
+    background: #1f2937;
+    box-shadow:
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 12px rgba(74, 158, 255, 0.6);
+}
+
+.faction-event-options {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.faction-event-option {
+    padding: 14px 16px;
+    background: #0b0f16;
+    border: 2px solid #4a9eff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.faction-event-option:hover {
+    border-color: #6bcf7f;
+    box-shadow: 0 0 15px rgba(107, 207, 127, 0.3);
+    transform: translateX(4px);
+}
+
+.faction-event-option-text {
+    color: #e5e7eb;
+    font-size: 0.95rem;
 }
