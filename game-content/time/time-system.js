@@ -10,6 +10,9 @@ function advanceTime(gameState, hours = 1) {
     }
 }
 
+// 전역으로 노출
+window.advanceTime = advanceTime;
+
 // 시간대 구분 (새벽, 오전, 낮, 오후, 저녁, 밤)
 function getTimePeriod(time) {
     if (time >= 0 && time < 6) return 'dawn'; // 새벽 (0-5시)
@@ -82,11 +85,20 @@ function getTimeDescription(time) {
     return description;
 }
 
+// 전역으로 노출
+window.getTimePeriod = getTimePeriod;
+window.isRushHour = isRushHour;
+window.getEventRateMultiplier = getEventRateMultiplier;
+window.getTimeDescription = getTimeDescription;
+window.updateTimeDisplay = updateTimeDisplay;
+window.updateOperatorTimeDisplay = updateOperatorTimeDisplay;
+window.updateTimeDisplayWindow = updateTimeDisplayWindow;
+
 // 시간 표시 업데이트 (UI)
 function updateTimeDisplay(gameState) {
     const timeDisplay = document.getElementById('timeDisplay');
     if (timeDisplay) {
-        const timeText = `Day ${gameState.day} - ${gameState.time}시`;
+        const timeText = `${gameState.time}시`;
         const timeDescription = getTimeDescription(gameState.time);
         timeDisplay.textContent = timeText;
         timeDisplay.title = timeDescription; // 툴팁으로 시간대 설명 표시
@@ -104,5 +116,28 @@ function updateOperatorTimeDisplay(gameState, operatorActivity) {
     if (endTimeDisplay && operatorActivity) {
         endTimeDisplay.textContent = `${operatorActivity.endTime}시`;
     }
+    
+    // 시간대 이미지 표시 창 업데이트
+    updateTimeDisplayWindow(gameState);
+}
+
+// 시간대 이미지 표시 창 업데이트 (도시 지도 오른쪽 상단)
+function updateTimeDisplayWindow(gameState) {
+    const timeDisplayWindow = document.getElementById('timeDisplayWindow');
+    const timeDisplayImage = document.getElementById('timeDisplayImage');
+    
+    if (!timeDisplayWindow || !timeDisplayImage) return;
+    
+    // 시간대 가져오기
+    const period = getTimePeriod(gameState.time);
+    
+    // 기존 클래스 제거
+    timeDisplayImage.className = 'time-display-image';
+    
+    // 시간대별 클래스 추가
+    timeDisplayImage.classList.add(`period-${period}`);
+    
+    // 이미지 경로 설정 (나중에 실제 이미지 경로로 변경 가능)
+    // 예: timeDisplayImage.style.backgroundImage = `url('images/time/${period}.jpg')`;
 }
 
