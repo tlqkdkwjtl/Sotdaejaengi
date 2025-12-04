@@ -43,7 +43,10 @@
           </div>
         </div>
         <div class="news-panel">
-          <h3>뉴스</h3>
+          <div class="news-panel-header">
+            <h3>뉴스</h3>
+            <div class="news-archive-icon" id="newsArchiveIcon"></div>
+          </div>
           <div id="newsContainer" class="news-list">
             <!-- 뉴스는 동적으로 생성됩니다 -->
           </div>
@@ -59,9 +62,25 @@
 
       <!-- 중앙: 지도 및 선택지 -->
       <div class="center-content">
+        <!-- 시간대 상단 박스 (오른쪽 상단) -->
+        <div class="time-display-box music-info-box" id="musicInfoBox">
+          <div class="music-title" id="musicTitle">-</div>
+          <div class="music-artist" id="musicArtist">-</div>
+        </div>
+        <div class="time-display-box settings-box" id="settingsBox">
+          <div class="settings-icon" id="settingsIcon">⚙</div>
+        </div>
         <!-- 시간대 이미지 표시 창 (오른쪽 상단) -->
         <div class="time-display-window" id="timeDisplayWindow">
           <div class="time-display-image" id="timeDisplayImage"></div>
+        </div>
+        <!-- 조언대사박스 (시간대 이미지 창 아래, 조언자 위) -->
+        <div class="advisor-dialogue-box" id="advisorDialogueBox">
+          <!-- 조언 대사가 들어갈 공간 -->
+        </div>
+        <!-- 조언자 (시간대 이미지 창 아래) -->
+        <div class="time-display-window advisor-box" id="advisorBox">
+          <!-- 조언자 이미지가 들어갈 공간 -->
         </div>
         <!-- 도시 지도 영역 -->
         <div class="map-area">
@@ -70,7 +89,13 @@
 
         <!-- 오퍼레이터 활동 영역 (메인 화면) -->
         <div class="operator-area" id="operatorArea">
-          <h3>오퍼레이터 활동</h3>
+          <div class="operator-header">
+            <h3>오퍼레이터 활동</h3>
+            <div class="operator-actions">
+              <button id="skipTimeBtn" class="operator-btn">1시간 진행</button>
+              <button id="endOperatorBtn" class="operator-btn">활동 종료 (18시까지)</button>
+            </div>
+          </div>
           <div class="operator-info">
             <div class="operator-time">
               <span>현재 시간: <span id="operatorTimeDisplay">8시</span></span>
@@ -83,10 +108,6 @@
           </div>
           <div class="operator-events" id="operatorEventsList">
             <!-- 활성 사건 목록이 표시됩니다 -->
-          </div>
-          <div class="operator-actions">
-            <button id="skipTimeBtn" class="operator-btn">1시간 진행</button>
-            <button id="endOperatorBtn" class="operator-btn">활동 종료 (18시까지)</button>
           </div>
         </div>
       </div>
@@ -102,6 +123,66 @@
       </div>
       <div class="info-panel-body" id="infoPanelBody">
         <!-- 정보 내용이 동적으로 생성됩니다 -->
+      </div>
+    </div>
+    <!-- 조언대사박스스텐드와 조언자박스스텐드 -->
+    <div class="advisor-stand-container">
+      <div class="advisor-dialogue-box-stand" id="advisorDialogueBoxStand">
+        <!-- 조언 대사가 들어갈 공간 -->
+      </div>
+      <div class="advisor-box-stand" id="advisorBoxStand">
+        <!-- 조언자 이미지가 들어갈 공간 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 노래 정보 오버레이 -->
+  <div id="musicInfoOverlay" class="music-info-overlay">
+    <div class="music-info-panel-content">
+      <div class="music-info-panel-header">
+        <h2>노래 목록</h2>
+        <button class="music-info-close-btn" id="musicInfoCloseBtn">×</button>
+      </div>
+      <div class="music-info-panel-body" id="musicInfoPanelBody">
+        <!-- 노래 목록이 표시됩니다 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 현재 재생 곡 오버레이 -->
+  <div id="musicListOverlay" class="music-list-overlay">
+    <div class="music-list-panel-content">
+      <div class="music-list-panel-header">
+        <h2>현재 재생 곡</h2>
+        <button class="music-list-close-btn" id="musicListCloseBtn">×</button>
+      </div>
+      <div class="music-list-panel-body" id="musicListPanelBody">
+        <!-- 현재 재생 곡과 다음 재생 곡 목록이 표시됩니다 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 환경설정 오버레이 -->
+  <div id="settingsOverlay" class="settings-overlay">
+    <div class="settings-panel-content">
+      <div class="settings-panel-header">
+        <h2>환경설정</h2>
+        <button class="settings-close-btn" id="settingsCloseBtn">×</button>
+      </div>
+      <div class="settings-panel-body">
+        <div class="settings-section">
+          <h3>테마 설정</h3>
+          <div class="theme-options">
+            <label class="theme-option">
+              <input type="radio" name="theme" value="dark" id="themeDark" checked>
+              <span>다크 모드</span>
+            </label>
+            <label class="theme-option">
+              <input type="radio" name="theme" value="light" id="themeLight">
+              <span>라이트 모드</span>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -129,6 +210,49 @@
         <div class="event-response-options" id="eventResponseOptions">
           <!-- 대응 선택지가 표시됩니다 -->
         </div>
+      </div>
+    </div>
+    <!-- 조언대사박스스텐드와 조언자박스스텐드 -->
+    <div class="advisor-stand-container">
+      <div class="advisor-dialogue-box-stand" id="advisorDialogueBoxStandEvent">
+        <!-- 조언 대사가 들어갈 공간 -->
+      </div>
+      <div class="advisor-box-stand" id="advisorBoxStandEvent">
+        <!-- 조언자 이미지가 들어갈 공간 -->
+      </div>
+    </div>
+        <div class="event-response-options" id="eventResponseOptions">
+          <!-- 대응 선택지가 표시됩니다 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 이전 뉴스 오버레이 -->
+  <div id="newsArchiveOverlay" class="news-archive-overlay">
+    <div class="news-archive-panel">
+      <div class="news-archive-header">
+        <h2>이전 뉴스</h2>
+        <div class="news-archive-header-controls">
+          <select class="news-archive-dropdown" id="newsArchiveDropdown">
+            <!-- 날짜 선택 옵션이 동적으로 생성됩니다 -->
+          </select>
+          <button class="news-archive-close" id="newsArchiveCloseBtn">×</button>
+        </div>
+      </div>
+      <div class="news-archive-content">
+        <div class="news-archive-list" id="newsArchiveList">
+          <!-- 선택된 날짜의 뉴스가 표시됩니다 -->
+        </div>
+      </div>
+    </div>
+    <!-- 조언대사박스스텐드와 조언자박스스텐드 -->
+    <div class="advisor-stand-container">
+      <div class="advisor-dialogue-box-stand" id="advisorDialogueBoxStandNews">
+        <!-- 조언 대사가 들어갈 공간 -->
+      </div>
+      <div class="advisor-box-stand" id="advisorBoxStandNews">
+        <!-- 조언자 이미지가 들어갈 공간 -->
       </div>
     </div>
   </div>
@@ -177,6 +301,7 @@
   <script src="game-content/events/event-responses.js"></script>
   <script src="game-content/events/faction-events.js"></script>
   <script src="game-content/events/event-response-ui.js"></script>
+  <script src="game-content/events/faction-event-ui.js"></script>
   
   <!-- 아이콘 정보 파일들 -->
   <script src="game-content/icons/city-stats.js"></script>
@@ -189,7 +314,8 @@
   <script src="game-content/news/news-templates.js"></script>
   <script src="game-content/news/status-news.js"></script>
   <script src="game-content/news/news-system.js"></script>
-  
+  <script src="game-content/news/news-archive-ui.js"></script>
+  <script src="game-content/news/news-archive-storage.js"></script>
   
   <!-- 시간 시스템 -->
   <script src="game-content/time/time-system.js"></script>
@@ -197,8 +323,22 @@
   <!-- 오퍼레이터 UI -->
   <script src="game-content/operator/operator-ui.js"></script>
   
+  <!-- 조언자 UI -->
+  <script src="game-content/advisor/advisor-ui.js"></script>
+  
+  <!-- UI 컴포넌트 -->
+  <script src="game-content/ui/music-info.js"></script>
+  <script src="game-content/ui/music-list.js"></script>
+  <script src="game-content/ui/settings.js"></script>
+  
   <!-- 예산 시스템 -->
   <script src="game-content/budget/budget-system.js"></script>
+  
+  <!-- 조언 시스템 -->
+  <script src="game-content/advisor/advisor.js"></script>
+  
+  <!-- 지도 렌더링 -->
+  <script src="game-content/map/map-renderer.js"></script>
   
   <!-- 메인 게임 로직 -->
   <script src="js/Sotdaejaengi.js"></script>
