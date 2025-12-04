@@ -503,263 +503,8 @@ class GameState {
     }
 }
 
-// AI 추천 시스템
-class AIAdvisor {
-    static generateRecommendation(gameState, choice) {
-        const impact = choice.impact;
-        const recommendations = [];
-        
-        // 확률 계산
-        let successRate = 70;
-        if (gameState.resources.budget < 20) successRate -= 20; // 예산이 20% 미만이면 위험
-        if (gameState.cityStats.stability < 50) successRate -= 15;
-        
-        recommendations.push(`성공 확률: ${successRate}%`);
-        
-        // 위험도 분석
-        const risks = [];
-        if (impact.bigCorp && impact.bigCorp.trust < 0) {
-            risks.push(`대기업의 반발 가능성: ${Math.abs(impact.bigCorp.trust * 2)}%`);
-        }
-        if (impact.immigrants && impact.immigrants.trust < 0) {
-            risks.push(`민족공동체의 반발 가능성: ${Math.abs(impact.immigrants.trust * 2)}%`);
-        }
-        if (impact.samulnori && impact.samulnori.trust < 0) {
-            risks.push(`사물놀이의 반발 가능성: ${Math.abs(impact.samulnori.trust * 2)}%`);
-        }
-        if (impact.budget && impact.budget < -5) {
-            risks.push(`예산 부족 위험 (${Math.abs(impact.budget)}% 소모)`);
-        }
-        
-        if (risks.length > 0) {
-            recommendations.push(`⚠ 위험: ${risks.join(', ')}`);
-        }
-        
-        // 추천 여부
-        const factionTension = Object.values(gameState.factions)
-            .reduce((sum, f) => sum + f.tension, 0) / Object.keys(gameState.factions).length;
-        
-        if (factionTension > 60 && choice.impact[Object.keys(choice.impact)[0]]?.tension < 0) {
-            recommendations.push(`✅ 추천: 파벌 긴장도 완화에 도움이 됩니다.`);
-        } else if (gameState.cityStats.crimeRate > 50 && choice.impact.crimeRate < 0) {
-            recommendations.push(`✅ 추천: 범죄율 감소에 효과적입니다.`);
-        }
-        
-        return recommendations.join(' | ');
-    }
-}
-
-// 도시 지도 렌더링
-class MapRenderer {
-    constructor(canvas) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
-        // 픽셀 퍼펙트 렌더링 설정
-        this.ctx.imageSmoothingEnabled = false;
-        this.ctx.webkitImageSmoothingEnabled = false;
-        this.ctx.mozImageSmoothingEnabled = false;
-        
-        // 배경 이미지 로드
-        this.backgroundImage = null;
-        this.loadBackgroundImage();
-    }
-    
-    loadBackgroundImage() {
-        // 배경 이미지 로드 (사용자가 나중에 추가할 이미지)
-        this.backgroundImage = new Image();
-        this.backgroundImage.onload = () => {
-            // 이미지 로드 완료 후 렌더링
-        };
-        this.backgroundImage.onerror = () => {
-            // 이미지가 없으면 기본 배경 사용
-            console.log('배경 이미지가 없습니다. 기본 배경을 사용합니다.');
-        };
-        // 이미지 경로는 사용자가 설정할 수 있도록 나중에 변경 가능
-        // this.backgroundImage.src = 'images/city_map.png';
-    }
-    
-    setBackgroundImage(src) {
-        if (this.backgroundImage) {
-            this.backgroundImage.src = src;
-        }
-    }
-    
-    render(gameState) {
-        this.clear();
-        this.renderBackground();
-        this.renderDistricts(gameState);
-        this.renderEvents(gameState);
-    }
-    
-    clear() {
-        this.ctx.fillStyle = '#0a0a0a';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-    
-    renderBackground() {
-        // 배경 이미지가 있으면 그리기
-        if (this.backgroundImage && this.backgroundImage.complete && this.backgroundImage.naturalWidth > 0) {
-            this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
-        } else {
-            // 기본 배경 (이미지가 없을 때)
-            this.ctx.fillStyle = '#1a1a2a';
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            
-            // 도트 패턴
-            this.ctx.fillStyle = '#0f0f1a';
-            for (let x = 0; x < this.canvas.width; x += 20) {
-                for (let y = 0; y < this.canvas.height; y += 20) {
-                    this.ctx.fillRect(x, y, 1, 1);
-                }
-            }
-        }
-    }
-    
-    renderDistricts(gameState) {
-        // 6개 구역을 폴리곤으로 표시
-        const districtAreas = this.getDistrictAreas();
-        
-        gameState.districts.forEach((district, index) => {
-            const area = districtAreas[index];
-            if (!area) return;
-            
-            // 범죄 수준에 따른 색상
-            const color = this.getCrimeColor(district.crimeLevel);
-            
-            // 구역 영역 그리기
-            this.ctx.fillStyle = color;
-            this.ctx.globalAlpha = 0.4; // 반투명
-            this.ctx.beginPath();
-            this.ctx.moveTo(area[0].x, area[0].y);
-            for (let i = 1; i < area.length; i++) {
-                this.ctx.lineTo(area[i].x, area[i].y);
-            }
-            this.ctx.closePath();
-            this.ctx.fill();
-            this.ctx.globalAlpha = 1.0;
-            
-            // 구역 테두리
-            this.ctx.strokeStyle = '#6bcf7f';
-            this.ctx.lineWidth = 2;
-            this.ctx.beginPath();
-            this.ctx.moveTo(area[0].x, area[0].y);
-            for (let i = 1; i < area.length; i++) {
-                this.ctx.lineTo(area[i].x, area[i].y);
-            }
-            this.ctx.closePath();
-            this.ctx.stroke();
-            
-            // 구역 이름 표시 (중앙 위치)
-            const centerX = area.reduce((sum, p) => sum + p.x, 0) / area.length;
-            const centerY = area.reduce((sum, p) => sum + p.y, 0) / area.length;
-            
-            this.ctx.fillStyle = '#ffffff';
-            this.ctx.font = 'bold 12px "Courier New", monospace';
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
-            // 텍스트 외곽선
-            this.ctx.strokeStyle = '#000';
-            this.ctx.lineWidth = 4;
-            this.ctx.strokeText(district.name, centerX, centerY - 10);
-            this.ctx.fillText(district.name, centerX, centerY - 10);
-            
-            // 범죄 수준
-            this.ctx.fillStyle = '#ff6b6b';
-            this.ctx.font = 'bold 10px "Courier New", monospace';
-            this.ctx.strokeText(`${district.crimeLevel}%`, centerX, centerY + 10);
-            this.ctx.fillText(`${district.crimeLevel}%`, centerX, centerY + 10);
-        });
-    }
-    
-    // 6개 구역의 영역 정의 (사용자가 이미지에 맞게 조정 가능)
-    getDistrictAreas() {
-        const w = this.canvas.width;
-        const h = this.canvas.height;
-        
-        return [
-            // 중앙 구역
-            [{x: w*0.3, y: h*0.2}, {x: w*0.7, y: h*0.2}, {x: w*0.7, y: h*0.5}, {x: w*0.3, y: h*0.5}],
-            // 동부 산업 구역
-            [{x: w*0.7, y: h*0.2}, {x: w*0.95, y: h*0.2}, {x: w*0.95, y: h*0.5}, {x: w*0.7, y: h*0.5}],
-            // 서부 재개발 구역
-            [{x: w*0.05, y: h*0.2}, {x: w*0.3, y: h*0.2}, {x: w*0.3, y: h*0.5}, {x: w*0.05, y: h*0.5}],
-            // 남부 생활 구역
-            [{x: w*0.3, y: h*0.5}, {x: w*0.7, y: h*0.5}, {x: w*0.7, y: h*0.85}, {x: w*0.3, y: h*0.85}],
-            // 북부 물류 구역
-            [{x: w*0.3, y: h*0.05}, {x: w*0.7, y: h*0.05}, {x: w*0.7, y: h*0.2}, {x: w*0.3, y: h*0.2}],
-            // 외곽 난민촌
-            [{x: w*0.7, y: h*0.5}, {x: w*0.95, y: h*0.5}, {x: w*0.95, y: h*0.85}, {x: w*0.7, y: h*0.85}]
-        ];
-    }
-    
-    getCrimeColor(level) {
-        if (level < 20) return '#4a9eff'; // 부드러운 파란색
-        if (level < 40) return '#ffd93d'; // 부드러운 노란색
-        if (level < 60) return '#ff8c42'; // 부드러운 주황색
-        return '#ff6b6b'; // 부드러운 빨간색
-    }
-    
-    renderEvents(gameState) {
-        // 활성 사건을 지도에 표시
-        const activeEvents = gameState.activeEvents.filter(e => e.status === 'active');
-        const districtAreas = this.getDistrictAreas();
-        
-        activeEvents.forEach(event => {
-            const districtIndex = event.districtIndex;
-            if (districtIndex < 0 || districtIndex >= districtAreas.length) return;
-            
-            const area = districtAreas[districtIndex];
-            if (!area) return;
-            
-            // 사건 위치 (구역 중앙에서 약간 랜덤)
-            const centerX = area.reduce((sum, p) => sum + p.x, 0) / area.length;
-            const centerY = area.reduce((sum, p) => sum + p.y, 0) / area.length;
-            
-            // 사건 타입에 따른 색상
-            let eventColor = '#ff6b6b';
-            let eventSize = 8;
-            switch(event.type) {
-                case 'small':
-                    eventColor = '#ffd93d';
-                    eventSize = 6;
-                    break;
-                case 'medium':
-                    eventColor = '#ff8c42';
-                    eventSize = 8;
-                    break;
-                case 'large':
-                    eventColor = '#ff6b6b';
-                    eventSize = 10;
-                    break;
-                case 'mega':
-                    eventColor = '#ff0000';
-                    eventSize = 12;
-                    break;
-            }
-            
-            // 사건 마커 그리기 (펄스 효과)
-            const pulse = Math.sin(Date.now() / 500) * 0.3 + 0.7;
-            this.ctx.globalAlpha = pulse;
-            
-            // 외곽 원
-            this.ctx.fillStyle = eventColor;
-            this.ctx.beginPath();
-            this.ctx.arc(centerX, centerY, eventSize + 2, 0, Math.PI * 2);
-            this.ctx.fill();
-            
-            // 내부 원
-            this.ctx.fillStyle = '#ffffff';
-            this.ctx.beginPath();
-            this.ctx.arc(centerX, centerY, eventSize, 0, Math.PI * 2);
-            this.ctx.fill();
-            
-            this.ctx.globalAlpha = 1.0;
-            
-            // 사건 제목 표시 (호버 시)
-            // TODO: 마우스 호버 이벤트 추가
-        });
-    }
-}
+// AI 조언 시스템은 game-content/advisor/advisor.js로 분리되었습니다.
+// 도시 지도 렌더링은 game-content/map/map-renderer.js로 분리되었습니다.
 
 // 게임 메인 클래스
 class Game {
@@ -770,9 +515,7 @@ class Game {
         this.selectedChoice = null;
         this.operatorActivity = null;
         this.operatorTimeInterval = null;
-        // 파벌 이벤트 관련 상태
-        this.currentFactionEvent = null;
-        this.factionDialogueTimer = null;
+        // 파벌 이벤트 UI는 game-content/events/faction-event-ui.js에서 관리됩니다.
         this.factionDialogueFullText = '';
         this.factionDialogueIndex = 0;
         
@@ -1001,6 +744,11 @@ class Game {
             return;
         }
         
+        // 이미 종료 중이면 진행하지 않음
+        if (this._isEndingOperatorActivity) {
+            return;
+        }
+        
         // 1시간 진행
         this.state.advanceTime(1);
         
@@ -1010,8 +758,14 @@ class Game {
         // 파벌 이벤트 발생 확인
         const factionEvent = this.state.generateFactionEvent();
         if (factionEvent) {
-            // 파벌 이벤트 표시
-            this.showFactionEvent(factionEvent);
+            // 파벌 이벤트 표시 (game-content/events/faction-event-ui.js에서 처리)
+            if (typeof showFactionEventUI === 'function') {
+                showFactionEventUI(
+                    factionEvent,
+                    (factionEvent, option) => this.applyFactionEventImpact(factionEvent, option),
+                    () => this.updateUI()
+                );
+            }
         }
         
         // 오퍼레이터 화면 업데이트
@@ -1031,6 +785,12 @@ class Game {
     
     // 오퍼레이터 활동 종료
     endOperatorActivity() {
+        // 이미 종료 중이면 중복 실행 방지
+        if (this._isEndingOperatorActivity) {
+            return;
+        }
+        this._isEndingOperatorActivity = true;
+        
         if (this.operatorTimeInterval) {
             clearInterval(this.operatorTimeInterval);
             this.operatorTimeInterval = null;
@@ -1040,11 +800,39 @@ class Game {
             this.operatorActivity.isActive = false;
         }
         
+        // 현재 시간부터 18시까지의 남은 시간에 대해 사건 발생 체크
+        const currentTime = this.state.time;
+        const endTime = this.operatorActivity ? this.operatorActivity.endTime : 18;
+        const remainingHours = endTime - currentTime;
+        
+        // 남은 시간만큼 사건 발생 시뮬레이션 (시간은 증가시키지 않고 사건만 생성)
+        for (let i = 0; i < remainingHours; i++) {
+            // 시간을 임시로 증가시켜서 시간대별 발생률 적용
+            const tempTime = currentTime + i;
+            const originalTime = this.state.time;
+            this.state.time = tempTime;
+            
+            // 사건 발생 확인 (시간대별 발생률 적용)
+            this.state.generateEvents();
+            
+            // 시간 복원
+            this.state.time = originalTime;
+        }
+        
         // 오래된 사건 정리
         this.state.cleanupEvents();
         
-        // 날짜 증가 (다음 날로)
-        this.state.day++;
+        // 현재 날짜 저장 (날짜 증가 전에 저장)
+        const currentDay = this.state.day;
+        
+        // 전날 뉴스 저장 (날짜 증가 전에 저장)
+        if (typeof saveDailyNews === 'function') {
+            saveDailyNews(this.state);
+        }
+        
+        // 날짜 증가 (다음 날로) - advanceTime을 사용하지 않고 직접 증가
+        // advanceTime을 사용하면 시간이 24시를 넘어갈 때 또 날짜가 증가할 수 있음
+        this.state.day = currentDay + 1;
         this.state.time = 8; // 다음 날 8시부터 시작
         
         // 다음 날 시작 - 오퍼레이터 활동 재시작
@@ -1056,14 +844,10 @@ class Game {
             // 오퍼레이터 활동 재시작
             this.startOperatorActivity();
             
-            // 다음 날 알림
-            setTimeout(() => {
-                // 메시지는 game-content/messages.js에서 로드됩니다.
-                const message = (typeof GameMessages !== 'undefined' && GameMessages.operatorStart)
-                    ? GameMessages.operatorStart(this.state.day)
-                    : `Day ${this.state.day} 시작!\n오퍼레이터 활동을 시작합니다.`;
-                alert(message);
-            }, 100);
+            // 종료 플래그 해제
+            this._isEndingOperatorActivity = false;
+            
+            // 다음 날 알림은 제거됨 (자동으로 넘어감)
         });
     }
     
@@ -1175,145 +959,7 @@ class Game {
         }
     }
     
-    // 파벌 이벤트 표시
-    showFactionEvent(factionEvent) {
-        if (!factionEvent) return;
-
-        this.currentFactionEvent = factionEvent;
-
-        const overlay = document.getElementById('factionEventOverlay');
-        const titleEl = document.getElementById('factionEventTitle');
-        const portraitEl = document.getElementById('factionEventPortrait');
-        const factionNameEl = document.getElementById('factionEventFactionName');
-        const repEl = document.getElementById('factionEventRepresentative');
-        const dialogueEl = document.getElementById('factionEventDialogueText');
-        const nextBtn = document.getElementById('factionEventNextBtn');
-        const skipBtn = document.getElementById('factionEventSkipBtn');
-        const closeBtn = document.getElementById('factionEventCloseBtn');
-        const optionsContainer = document.getElementById('factionEventOptions');
-
-        if (!overlay || !titleEl || !portraitEl || !factionNameEl || !repEl || !dialogueEl || !nextBtn || !skipBtn || !closeBtn || !optionsContainer) {
-            // 요소를 찾지 못하면 기존 alert 방식 사용
-            let message = `${factionEvent.title}\n\n${factionEvent.description}\n\n${factionEvent.dialogue}\n\n`;
-            message += '선택지:\n';
-            factionEvent.options.forEach((option, index) => {
-                message += `${index + 1}. ${option.text}\n`;
-            });
-            const choice = prompt(message + '\n선택지를 입력하세요 (1, 2, 3):');
-            if (choice && choice >= '1' && choice <= '3') {
-                const optionIndex = parseInt(choice) - 1;
-                const selectedOption = factionEvent.options[optionIndex];
-                if (selectedOption) {
-                    this.applyFactionEventImpact(factionEvent, selectedOption);
-                }
-            }
-            return;
-        }
-
-        // 제목 및 파벌 정보 설정
-        titleEl.textContent = factionEvent.title;
-        const faction = factionEvent.faction;
-        factionNameEl.textContent = faction?.name || '파벌';
-        repEl.textContent = faction?.representative ? `대표: ${faction.representative}` : '';
-
-        // 초상(이미지/이니셜) 설정
-        portraitEl.style.backgroundImage = '';
-        if (faction && faction.portraitUrl) {
-            portraitEl.style.backgroundImage = `url('${faction.portraitUrl}')`;
-            portraitEl.textContent = '';
-        } else {
-            // 대표 이름 첫 글자로 이니셜 표시
-            const repName = faction?.representative || '';
-            const initial = repName ? repName.charAt(0) : '?';
-            portraitEl.textContent = initial;
-        }
-
-        // 이전 대사 타이머 정리
-        if (this.factionDialogueTimer) {
-            clearInterval(this.factionDialogueTimer);
-            this.factionDialogueTimer = null;
-        }
-
-        // 대사 텍스트 준비 (한 글자씩 출력)
-        const fullText = factionEvent.dialogue || '';
-        this.factionDialogueFullText = fullText;
-        this.factionDialogueIndex = 0;
-        dialogueEl.textContent = '';
-
-        // 버튼/옵션 초기 상태
-        optionsContainer.style.display = 'none';
-        optionsContainer.innerHTML = '';
-
-        // 대사 출력 타이머
-        const typeSpeed = 30; // ms
-        this.factionDialogueTimer = setInterval(() => {
-            if (this.factionDialogueIndex >= this.factionDialogueFullText.length) {
-                clearInterval(this.factionDialogueTimer);
-                this.factionDialogueTimer = null;
-                return;
-            }
-            dialogueEl.textContent += this.factionDialogueFullText.charAt(this.factionDialogueIndex);
-            this.factionDialogueIndex++;
-        }, typeSpeed);
-
-        // 건너뛰기 버튼: 전체 대사 즉시 표시
-        skipBtn.onclick = () => {
-            if (this.factionDialogueTimer) {
-                clearInterval(this.factionDialogueTimer);
-                this.factionDialogueTimer = null;
-            }
-            dialogueEl.textContent = this.factionDialogueFullText;
-        };
-
-        // 닫기 버튼: 오버레이 닫기
-        const closeOverlay = () => {
-            if (this.factionDialogueTimer) {
-                clearInterval(this.factionDialogueTimer);
-                this.factionDialogueTimer = null;
-            }
-            overlay.classList.remove('active');
-            this.currentFactionEvent = null;
-        };
-        closeBtn.onclick = () => {
-            closeOverlay();
-        };
-
-        // 다음 버튼: 선택지 표시 단계로 전환
-        nextBtn.onclick = () => {
-            if (!this.currentFactionEvent) return;
-
-            // 대사 출력 중이면 먼저 다 보여주기
-            if (this.factionDialogueTimer) {
-                clearInterval(this.factionDialogueTimer);
-                this.factionDialogueTimer = null;
-                dialogueEl.textContent = this.factionDialogueFullText;
-            }
-
-            // 선택지 UI 구성
-            optionsContainer.innerHTML = '';
-            this.currentFactionEvent.options.forEach((option, index) => {
-                const optionEl = document.createElement('div');
-                optionEl.className = 'faction-event-option';
-
-                const textEl = document.createElement('div');
-                textEl.className = 'faction-event-option-text';
-                textEl.textContent = option.text;
-                optionEl.appendChild(textEl);
-
-                optionEl.addEventListener('click', () => {
-                    this.applyFactionEventImpact(this.currentFactionEvent, option);
-                    closeOverlay();
-                });
-
-                optionsContainer.appendChild(optionEl);
-            });
-
-            optionsContainer.style.display = 'flex';
-        };
-
-        // 오버레이 표시
-        overlay.classList.add('active');
-    }
+    // 파벌 이벤트 표시는 game-content/events/faction-event-ui.js에서 처리됩니다.
     
     // 파벌 이벤트 영향 적용
     applyFactionEventImpact(factionEvent, option) {
@@ -1510,5 +1156,5 @@ class Game {
 
 // 게임 시작
 window.addEventListener('DOMContentLoaded', () => {
-    new Game();
+    window.gameInstance = new Game();
 });
