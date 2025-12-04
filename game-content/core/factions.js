@@ -6,35 +6,40 @@ const FactionsData = {
         tension: 30, 
         name: "기업경제협회",
         representative: "최수환",
-        englishName: "Corporate Economic Association"
+        englishName: "Corporate Economic Association",
+        portraitUrl: "images/Choi Suhwan_pon.png"
     },
     citizens: { 
         trust: 60, 
         tension: 20, 
         name: "민족시민연대",
         representative: "이서연",
-        englishName: "National Citizens Alliance"
+        englishName: "National Citizens Alliance",
+        portraitUrl: "images/Lee Seoyeon.png"
     },
     immigrants: { 
         trust: 45, 
         tension: 40, 
         name: "민족공동체",
         representative: "이영철",
-        englishName: "National Community"
+        englishName: "National Community",
+        portraitUrl: "images/Lee Youngcheol(Ri Youngcheol).png"
     },
     religion: { 
         trust: 55, 
         tension: 25, 
         name: "범시민종교인평화협회",
         representative: "박도현",
-        englishName: "Pan-Citizen Religious Peace Association"
+        englishName: "Pan-Citizen Religious Peace Association",
+        portraitUrl: "images/Bishop Protasius Dohyun Park.png"
     },
     samulnori: { 
         trust: 30, 
         tension: 60, 
         name: "사물놀이",
         representative: "윤하림",
-        englishName: "Samulnori"
+        englishName: "Samulnori",
+        portraitUrl: "images/Yoon Harim.png"
     }
 };
 
