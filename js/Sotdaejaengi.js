@@ -16,7 +16,10 @@ class GameState {
         // InitialResources는 game-content/initial-values.js에서 로드됩니다.
         this.resources = (typeof InitialResources !== 'undefined' && InitialResources)
             ? { ...InitialResources }
-            : { budget: 100, personnel: 100, equipment: 50 };
+            : { budget: 100, personnel: 100, police: 6, drones: 8, equipment: 50 };
+        
+        // 파견된 자원 추적 (복귀 시간 관리용)
+        this.deployedResources = []; // { type: 'police'|'drone', count: number, eventId: number, deployedAt: {day, time}, returnTime: number, returned: boolean }
         
         // 초기 도시 통계
         // InitialCityStats는 game-content/initial-values.js에서 로드됩니다.
@@ -38,6 +41,9 @@ class GameState {
         
         this.activeEvents = [];
         this.factionEvents = []; // 파벌 이벤트
+        
+        // 사건 타입별 마지막 발생 시간 추적 (쿨다운 시스템용)
+        this.lastEventTime = {}; // { 'small': {day: 1, time: 8}, ... }
         
         // 사건 타입 정의
         // EventTypesData는 game-content/event-types.js에서 로드됩니다.
@@ -213,79 +219,38 @@ class GameState {
             if (template.budgetCost) {
                 event.budgetCost = template.budgetCost;
             }
+            // 초대형 사건의 스토리 필드도 전달
+            if (template.story) {
+                event.story = template.story;
+            }
         }
+        
+        // 날짜와 범죄율에 따른 비용 증가 (위험 리스크 증가)
+        // 날짜가 지날수록 비용 증가 (1일당 +2%)
+        const dayMultiplier = 1 + ((this.day - 1) * 0.02);
+        
+        // 해당 구역의 범죄율에 따른 비용 증가 (위에서 선언된 district 변수 재사용)
+        const districtCrimeRate = district ? district.crimeLevel : 0;
+        const crimeMultiplier = 1 + (districtCrimeRate * 0.01); // 범죄율 1%당 +1% 비용
+        
+        // 전체 평균 범죄율에 따른 추가 증가
+        const avgCrimeRate = this.districts.reduce((sum, d) => sum + d.crimeLevel, 0) / this.districts.length;
+        const avgCrimeMultiplier = 1 + (avgCrimeRate * 0.005); // 평균 범죄율 1%당 +0.5% 비용
+        
+        // 최종 비용 계산
+        event.budgetCost = event.budgetCost * dayMultiplier * crimeMultiplier * avgCrimeMultiplier;
         
         return event;
     }
     
     // 사건 발생 시스템 (시간대별 발생률 적용)
+    // 사건 발생 로직은 game-content/events/event-generation.js로 분리되었습니다.
     generateEvents() {
-        // EventTemplates 확인
-        if (typeof EventTemplates === 'undefined') {
-            console.warn('EventTemplates가 로드되지 않았습니다.');
-            return;
-        }
-        
-        // eventTypes 확인
-        if (!this.eventTypes || Object.keys(this.eventTypes).length === 0) {
-            console.warn('eventTypes가 초기화되지 않았습니다.');
-            return;
-        }
-        
-        const timeMultiplier = this.getEventRateMultiplier();
-        let eventsGenerated = 0;
-        let totalChance = 0;
-        
-        // 각 사건 타입별로 발생 확인
-        Object.keys(this.eventTypes).forEach(type => {
-            const eventType = this.eventTypes[type];
-            if (!eventType) return;
-            
-            // 현재 활성 사건 개수 확인
-            const activeCount = this.activeEvents.filter(e => e.type === type && e.status === 'active').length;
-            if (activeCount >= eventType.maxActive) {
-                return; // 최대 개수 도달
-            }
-            
-            // 발생 확률 계산 (시간대 배수 적용)
-            const occurrenceChance = eventType.occurrenceRate * timeMultiplier;
-            totalChance += occurrenceChance;
-            
-            // 랜덤 발생 확인
-            if (Math.random() < occurrenceChance) {
-                // 템플릿에서 랜덤 선택
-                const templates = EventTemplates[type] || [];
-                const template = templates.length > 0 
-                    ? templates[Math.floor(Math.random() * templates.length)]
-                    : null;
-                
-                const newEvent = this.createEvent(type, null, template);
-                if (newEvent) {
-                    this.activeEvents.push(newEvent);
-                    eventsGenerated++;
-                }
-            }
-        });
-        
-        // 디버깅: 사건 생성 여부 확인
-        console.log(`사건 생성 시도 - 시간: ${this.time}시, 배수: ${timeMultiplier.toFixed(2)}, 총 확률: ${totalChance.toFixed(2)}, 생성된 사건: ${eventsGenerated}개`);
-        
-        // 활성 사건이 없고 발생 확률이 낮은 경우, 최소 1개 사건 강제 생성 (테스트용)
-        const activeCount = this.activeEvents.filter(e => e.status === 'active').length;
-        if (activeCount === 0 && eventsGenerated === 0 && totalChance > 0) {
-            // 소규모 사건 강제 생성
-            const smallType = this.eventTypes.small;
-            if (smallType) {
-                const templates = EventTemplates.small || [];
-                const template = templates.length > 0 
-                    ? templates[Math.floor(Math.random() * templates.length)]
-                    : null;
-                const newEvent = this.createEvent('small', null, template);
-                if (newEvent) {
-                    this.activeEvents.push(newEvent);
-                    console.log('활성 사건이 없어 소규모 사건을 강제 생성했습니다.');
-                }
-            }
+        if (typeof window.generateEvents === 'function') {
+            return window.generateEvents(this);
+        } else {
+            console.warn('generateEvents 함수가 로드되지 않았습니다.');
+            return 0;
         }
     }
     
@@ -334,18 +299,135 @@ class GameState {
         };
     }
     
-    // 사건 해결 처리
+    // 사건 해결 성공률 계산 (외부에서도 사용 가능하도록 분리)
+    calculateEventSuccessRate(event, responseType = 'dispatch') {
+        if (!event) return 0;
+        
+        // 미처리 시간 계산 (시간 단위)
+        const hoursSinceEvent = (this.day - event.day) * 24 + (this.time - event.time);
+        const hoursUnresolved = Math.max(0, hoursSinceEvent);
+        
+        // 성공률 계산 (미처리 시간에 따라 감소)
+        // 기본 성공률: 100%
+        // 미처리 시간에 따른 감소 (로그 스케일 적용)
+        // - 첫 6시간: 1시간당 -3% (총 -18%)
+        // - 6~24시간: 1시간당 -1% (총 -18%)
+        // - 24시간 이후: 1시간당 -0.5% (총 -12% / 24시간)
+        let successRate = 100;
+        if (hoursUnresolved <= 6) {
+            successRate -= hoursUnresolved * 3; // 첫 6시간: 시간당 -3%
+        } else if (hoursUnresolved <= 24) {
+            successRate -= 18 + (hoursUnresolved - 6) * 1; // 6~24시간: 시간당 -1%
+        } else {
+            successRate -= 36 + (hoursUnresolved - 24) * 0.5; // 24시간 이후: 시간당 -0.5%
+        }
+        successRate = Math.max(30, successRate); // 최소 30%
+        
+        // 대응 방법별 성공률 조정
+        // 경찰 파견: 가장 효과적 (기본 성공률 유지 또는 약간 증가)
+        // 드론: 중간 효과 (약간 감소)
+        // CCTV: 제한적 효과 (많이 감소하지만 여전히 성공 가능)
+        if (responseType === 'dispatch') {
+            // 경찰 파견: 기본 성공률 +10% 보너스
+            successRate += 10;
+        } else if (responseType === 'drone') {
+            // 드론: 기본 성공률 -10% 페널티
+            successRate -= 10;
+        } else if (responseType === 'cctv') {
+            // CCTV: 기본 성공률 -30% 페널티 (하지만 여전히 성공 가능)
+            successRate -= 30;
+        }
+        // ignore는 성공률 계산 없음 (무시하므로)
+        
+        // 범죄율이 높을 때 추가 감소
+        const district = this.districts[event.districtIndex];
+        if (district && district.crimeLevel >= 60) {
+            successRate -= 20; // 범죄율 60% 이상 시 추가 -20%
+        }
+        if (district && district.crimeLevel >= 80) {
+            successRate -= 20; // 범죄율 80% 이상 시 추가 -20%
+        }
+        
+        // 자원 충족도에 따른 성공률 조정
+        if (typeof calculateResourceFulfillment === 'function' && 
+            (responseType === 'dispatch' || responseType === 'drone')) {
+            const fulfillment = calculateResourceFulfillment(this, event.type, responseType);
+            
+            // 자원이 충분하면 보너스 (100% 이상)
+            if (fulfillment.fulfillment >= 1.0) {
+                // 100% 충족: +5% 보너스
+                // 150% 이상 충족: +10% 보너스
+                const bonus = fulfillment.fulfillment >= 1.5 ? 10 : 5;
+                successRate += bonus;
+            } 
+            // 자원이 부족하면 페널티 (100% 미만, 하지만 여전히 성공 가능)
+            else if (fulfillment.fulfillment > 0) {
+                // 50% 이상: -10% 페널티
+                // 50% 미만: -20% 페널티
+                const penalty = fulfillment.fulfillment >= 0.5 ? -10 : -20;
+                successRate += penalty;
+            }
+            // 자원이 0이면 큰 페널티 (하지만 최소 성공률은 유지)
+            else {
+                successRate -= 30;
+            }
+        }
+        
+        // 최소 성공률 설정 (옵션별로 다름)
+        let minSuccessRate = 10; // 기본 최소값
+        if (responseType === 'dispatch') {
+            minSuccessRate = 20; // 경찰 파견은 최소 20%
+        } else if (responseType === 'drone') {
+            minSuccessRate = 15; // 드론은 최소 15%
+        } else if (responseType === 'cctv') {
+            minSuccessRate = 5; // CCTV는 최소 5% (적게 보내도 성공 가능)
+        }
+        successRate = Math.max(minSuccessRate, successRate);
+        
+        return Math.min(100, Math.max(0, successRate)); // 0~100% 범위로 제한
+    }
+    
+    // 사건 해결 처리 (즉시 성공/실패 결정하지 않고 "처리 중" 상태로 변경)
     resolveEvent(eventId, responseType = 'dispatch', personnelId = null) {
         const event = this.activeEvents.find(e => e.id === eventId);
         if (!event || event.status !== 'active') {
             return false;
         }
         
-        // 사건 해결 처리
-        event.status = 'resolved';
+        // 성공률 계산 (나중에 복귀 시간에 결정할 때 사용)
+        const successRate = this.calculateEventSuccessRate(event, responseType);
+        event.successRate = successRate; // 성공률 기록
+        
+        // 사건을 "처리 중" 상태로 변경 (자원 복귀 시간에 성공/실패 결정)
+        event.status = 'processing';
         event.responseType = responseType;
-        event.resolvedAt = { time: this.time, day: this.day };
+        event.deployedAt = { time: this.time, day: this.day }; // 파견 시간 기록
         event.personnelId = personnelId; // 처리한 인물 기록
+        
+        // 성공 여부는 나중에 자원 복귀 시간에 결정하므로 여기서는 결정하지 않음
+        return true; // 처리 시작 성공
+        
+        // 자원 파견 및 손실 처리 (경찰 파견 또는 드론 사용 시)
+        if (responseType === 'dispatch' || responseType === 'drone') {
+            // 자원 파견 (선택된 수량 사용)
+            if (typeof deployResources === 'function') {
+                const policeCount = event.selectedPoliceCount || null;
+                const droneCount = event.selectedDroneCount || null;
+                const deployed = deployResources(this, event.type, responseType, event.id, policeCount, droneCount);
+                
+                // 경찰 파견 시 손실 가능성 (디스토피아 컨셉)
+                if (responseType === 'dispatch' && deployed) {
+                    const policeDeployed = deployed.find(r => r.type === 'police');
+                    if (policeDeployed && typeof applyPoliceCasualty === 'function') {
+                        const casualties = applyPoliceCasualty(this, event.type, policeDeployed.count);
+                        if (casualties > 0) {
+                            // 경찰 손실 알림 (나중에 뉴스로 표시 가능)
+                            console.log(`⚠ 경찰 ${casualties}명이 사건 처리 중 손실되었습니다.`);
+                        }
+                    }
+                }
+            }
+        }
         
         // 예산 처리
         // 예산 시스템은 game-content/budget/budget-system.js에서 관리됩니다.
@@ -365,13 +447,35 @@ class GameState {
             else if (responseType === 'ignore') actualBudgetCost = 0;
         }
         
-        // 무시 시 영향 증가
+        // 무시 시 즉시 영향 적용 (자원 파견이 없으므로)
         if (responseType === 'ignore') {
             event.impact.crimeRate = (event.impact.crimeRate || 0) + 5;
             event.impact.stability = (event.impact.stability || 0) - 3;
+            
+            // 즉시 도시 통계에 영향 적용
+            if (event.impact.crimeRate) {
+                const district = this.districts[event.districtIndex];
+                if (district) {
+                    district.crimeLevel = Math.max(0, Math.min(100, 
+                        district.crimeLevel + event.impact.crimeRate
+                    ));
+                }
+            }
+            
+            if (event.impact.stability) {
+                this.cityStats.stability = Math.max(0, Math.min(100,
+                    this.cityStats.stability + event.impact.stability
+                ));
+            }
+            
+            this.updateCityStats();
+            
+            // 무시는 즉시 사건 해결 처리
+            event.status = 'resolved';
+            event.resolvedAt = { time: this.time, day: this.day };
         }
         
-        // 예산 적용
+        // 예산 적용 (즉시 차감)
         if (typeof applyBudgetCost === 'function') {
             applyBudgetCost(this, actualBudgetCost);
         } else {
@@ -379,30 +483,56 @@ class GameState {
             this.resources.budget = Math.max(0, Math.min(100, this.resources.budget - actualBudgetCost));
         }
         
-        // 도시 통계에 영향 적용
-        if (event.impact.crimeRate) {
-            const district = this.districts[event.districtIndex];
-            if (district) {
-                district.crimeLevel = Math.max(0, Math.min(100, 
-                    district.crimeLevel + event.impact.crimeRate
-                ));
-            }
-        }
+        // 도시 통계에 영향 적용은 자원 복귀 시간에 처리 (processResourceReturns에서)
+        // 무시는 위에서 이미 처리됨
         
-        if (event.impact.stability) {
-            this.cityStats.stability = Math.max(0, Math.min(100,
-                this.cityStats.stability + event.impact.stability
-            ));
-        }
-        
-        if (event.impact.factionTension) {
-            this.cityStats.factionTension = Math.max(0, Math.min(100,
-                this.cityStats.factionTension + event.impact.factionTension
-            ));
-        }
-        
-        this.updateCityStats();
         return true;
+    }
+    
+    // 미처리 사건의 누적 영향 적용 (시간이 지날수록 범죄율과 안정도에 부정적 영향)
+    applyUnresolvedEventImpacts() {
+        const activeEvents = this.activeEvents.filter(e => e.status === 'active');
+        
+        activeEvents.forEach(event => {
+            // 미처리 시간 계산 (시간 단위)
+            const hoursSinceEvent = (this.day - event.day) * 24 + (this.time - event.time);
+            const hoursUnresolved = Math.max(0, hoursSinceEvent);
+            
+            // 1시간마다 누적 영향 적용 (처음 발생한 시간에는 영향 없음)
+            if (hoursUnresolved > 0) {
+                // 미처리 1시간당 범죄율 +0.1%, 안정도 -0.05% 증가
+                // 사건 타입에 따라 영향 배수 적용
+                let impactMultiplier = 1.0;
+                switch(event.type) {
+                    case 'small':
+                        impactMultiplier = 0.5; // 소규모 사건은 영향 적음
+                        break;
+                    case 'medium':
+                        impactMultiplier = 1.0; // 중규모 사건은 기본 영향
+                        break;
+                    case 'large':
+                        impactMultiplier = 1.5; // 대규모 사건은 영향 큼
+                        break;
+                    case 'mega':
+                        impactMultiplier = 2.0; // 초대규모 사건은 영향 매우 큼
+                        break;
+                }
+                
+                // 해당 구역의 범죄율 증가
+                const district = this.districts[event.districtIndex];
+                if (district) {
+                    const crimeImpact = 0.1 * impactMultiplier;
+                    district.crimeLevel = Math.min(100, district.crimeLevel + crimeImpact);
+                }
+                
+                // 전체 안정도 감소
+                const stabilityImpact = 0.05 * impactMultiplier;
+                this.cityStats.stability = Math.max(0, this.cityStats.stability - stabilityImpact);
+            }
+        });
+        
+        // 도시 통계 업데이트
+        this.updateCityStats();
     }
     
     // 인물 ID로 인물 찾기
@@ -511,7 +641,13 @@ class Game {
     constructor() {
         this.state = new GameState();
         this.mapCanvas = document.getElementById('cityMap');
-        this.mapRenderer = new MapRenderer(this.mapCanvas);
+        
+        // Canvas 요소 확인
+        if (!this.mapCanvas) {
+            console.error('cityMap Canvas 요소를 찾을 수 없습니다.');
+        }
+        
+        this.mapRenderer = this.mapCanvas ? new MapRenderer(this.mapCanvas) : null;
         this.selectedChoice = null;
         this.operatorActivity = null;
         this.operatorTimeInterval = null;
@@ -549,6 +685,11 @@ class Game {
         
         // 배경 이미지 설정 (이미지 파일 경로를 여기에 설정)
         // 예: this.mapRenderer.setBackgroundImage('images/city_map.png');
+        
+        // 조언자 이미지 설정
+        if (typeof setAdvisorImage === 'function') {
+            setAdvisorImage('images/Advisor1.png');
+        }
         
         // 지도 렌더링 루프
         this.gameLoop();
@@ -609,6 +750,12 @@ class Game {
         
         if (!overlay || !panelBody) return;
         
+        // 확인 버튼 숨김 (새 패널 열 때)
+        const confirmContainer = document.getElementById('infoConfirmContainer');
+        if (confirmContainer) {
+            confirmContainer.style.display = 'none';
+        }
+        
         // 정보 패널 내용 생성 (차후 확장 가능)
         const infoData = this.getInfoData(infoId);
         
@@ -616,7 +763,7 @@ class Game {
         panelBody.innerHTML = '';
         
         // 섹션별로 정보 추가
-        infoData.sections.forEach(section => {
+        infoData.sections.forEach((section, sectionIndex) => {
             const sectionDiv = document.createElement('div');
             sectionDiv.className = 'info-section';
             
@@ -629,7 +776,30 @@ class Game {
             if (section.text) {
                 const text = document.createElement('p');
                 text.textContent = section.text;
+                text.style.whiteSpace = 'pre-line'; // 줄바꿈 유지
                 sectionDiv.appendChild(text);
+            }
+            
+            // 자원 관리 패널에 자원 추가 버튼 추가
+            if (infoId === 2 && (sectionIndex === 0 || sectionIndex === 1)) {
+                const resourceType = sectionIndex === 0 ? 'police' : 'drone';
+                const resourceName = sectionIndex === 0 ? '경찰 차량' : '드론';
+                const maxCount = sectionIndex === 0 ? 10 : 20;
+                const cost = sectionIndex === 0 ? 5 : 3;
+                const currentTotal = resourceType === 'police'
+                    ? (this.state.resources.police || 0)
+                    : (this.state.resources.drones || 0);
+                
+                // 최대 보유량 미만일 때만 버튼 표시
+                if (currentTotal < maxCount) {
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'resource-add-btn-info';
+                    addBtn.textContent = `${resourceName} 추가 (예산 ${cost}% 소모)`;
+                    addBtn.onclick = () => {
+                        this.addResourceFromInfoPanel(resourceType, this.state, sectionDiv, sectionIndex);
+                    };
+                    sectionDiv.appendChild(addBtn);
+                }
             }
             
             if (section.graph) {
@@ -661,10 +831,88 @@ class Game {
         overlay.classList.add('active');
     }
     
+    // 자원 관리 패널에서 자원 추가 (조언자 확인 방식)
+    addResourceFromInfoPanel(resourceType, gameState, sectionDiv, sectionIndex) {
+        const resourceName = resourceType === 'police' ? '경찰 차량' : '드론';
+        const maxCount = resourceType === 'police' ? 10 : 20;
+        const cost = resourceType === 'police' ? 5 : 3;
+        const currentTotal = resourceType === 'police'
+            ? (gameState.resources.police || 0)
+            : (gameState.resources.drones || 0);
+        
+        // 최대 보유량 확인
+        if (currentTotal >= maxCount) {
+            if (typeof displayAdvisorStandDialogue === 'function') {
+                displayAdvisorStandDialogue(`${resourceName}은 최대 ${maxCount}대까지 보유할 수 있습니다.`, 'info');
+            }
+            return;
+        }
+        
+        // 예산 확인
+        if (gameState.resources.budget < cost) {
+            if (typeof displayAdvisorStandDialogue === 'function') {
+                displayAdvisorStandDialogue(`예산이 부족합니다! (필요: ${cost}%, 보유: ${gameState.resources.budget.toFixed(1)}%)`, 'info');
+            }
+            return;
+        }
+        
+        // 조언자 대사 표시
+        if (typeof displayAdvisorStandDialogue === 'function') {
+            displayAdvisorStandDialogue(`예산 ${cost}% 소모하여 ${resourceName} 1대를 추가합니까?`, 'info');
+        }
+        
+        // 확인 버튼 표시
+        const confirmContainer = document.getElementById('infoConfirmContainer');
+        const confirmBtn = document.getElementById('infoConfirmBtn');
+        if (confirmContainer && confirmBtn) {
+            confirmContainer.style.display = 'block';
+            
+            // 기존 이벤트 리스너 제거 후 새로 추가
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            
+            newConfirmBtn.onclick = () => {
+                // 자원 추가
+                if (resourceType === 'police') {
+                    gameState.resources.police = Math.min(maxCount, (gameState.resources.police || 0) + 1);
+                } else {
+                    gameState.resources.drones = Math.min(maxCount, (gameState.resources.drones || 0) + 1);
+                }
+                
+                // 예산 차감
+                if (typeof applyBudgetCost === 'function') {
+                    applyBudgetCost(gameState, cost);
+                } else {
+                    gameState.resources.budget = Math.max(0, gameState.resources.budget - cost);
+                }
+                
+                // 확인 버튼 숨김
+                confirmContainer.style.display = 'none';
+                
+                // 정보 패널 새로고침
+                this.showInfoPanel(2);
+                
+                // 게임 UI 업데이트
+                this.updateUI();
+                
+                // 조언자 메시지 업데이트
+                if (typeof displayAdvisorStandDialogue === 'function') {
+                    displayAdvisorStandDialogue(`${resourceName} 1대가 추가되었습니다. (예산 ${cost}% 소모)`, 'info');
+                }
+            };
+        }
+    }
+    
     closeInfoPanel() {
         const overlay = document.getElementById('infoOverlay');
         if (overlay) {
             overlay.classList.remove('active');
+        }
+        
+        // 확인 버튼 숨김
+        const confirmContainer = document.getElementById('infoConfirmContainer');
+        if (confirmContainer) {
+            confirmContainer.style.display = 'none';
         }
     }
     
@@ -682,9 +930,9 @@ class Game {
                     return FactionRelationsInfo;
                 }
                 break;
-            case 2: // 구역 정보
-                if (typeof getDistrictInfo === 'function') {
-                    return getDistrictInfo(this.state);
+            case 2: // 자원 관리 (구역 정보는 지도 클릭으로 확인)
+                if (typeof getResourceManagementInfo === 'function') {
+                    return getResourceManagementInfo(this.state);
                 }
                 break;
             case 3: // 자원 현황
@@ -752,8 +1000,30 @@ class Game {
         // 1시간 진행
         this.state.advanceTime(1);
         
+        // 자원 복귀 처리 (시간 경과에 따라)
+        if (typeof processResourceReturns === 'function') {
+            processResourceReturns(this.state);
+        }
+        
+        // 미처리 사건의 누적 영향 적용 (시간이 지날수록 범죄율 증가)
+        this.state.applyUnresolvedEventImpacts();
+        
         // 사건 발생 확인
         this.state.generateEvents();
+        
+        // 초대형 사건 확인 (파벌 이벤트처럼 즉시 처리)
+        const megaEvents = this.state.activeEvents.filter(e => e.type === 'mega' && e.status === 'pending');
+        if (megaEvents.length > 0) {
+            const megaEvent = megaEvents[0];
+            // 초대형 사건 UI 표시
+            if (typeof showMegaEventUI === 'function') {
+                showMegaEventUI(
+                    megaEvent,
+                    (megaEvent, option) => this.handleMegaEventResponse(megaEvent, option),
+                    () => this.updateUI()
+                );
+            }
+        }
         
         // 파벌 이벤트 발생 확인
         const factionEvent = this.state.generateFactionEvent();
@@ -833,7 +1103,13 @@ class Game {
         // 날짜 증가 (다음 날로) - advanceTime을 사용하지 않고 직접 증가
         // advanceTime을 사용하면 시간이 24시를 넘어갈 때 또 날짜가 증가할 수 있음
         this.state.day = currentDay + 1;
-        this.state.time = 8; // 다음 날 8시부터 시작
+        this.state.time = 8;
+        
+        // 엔딩 체크 (30일)
+        if (this.state.day > 30) {
+            this.checkGameEnd();
+            return;
+        } // 다음 날 8시부터 시작
         
         // 다음 날 시작 - 오퍼레이터 활동 재시작
         this.showGlitchTransition(() => {
@@ -871,28 +1147,30 @@ class Game {
     // 사건 대응 선택지 표시
     
     // 사건 대응 처리
-    handleEventResponse(eventId, responseType) {
+    handleEventResponse(eventId, responseType, personnelId = null, resourceCounts = null) {
         const event = this.state.activeEvents.find(e => e.id === eventId);
         if (!event || event.status !== 'active') {
             this.closeEventResponseOverlay();
             return;
         }
         
+        // 수량 정보가 있으면 저장 (나중에 자원 파견 시 사용)
+        if (resourceCounts) {
+            event.selectedPoliceCount = resourceCounts.police || 0;
+            event.selectedDroneCount = resourceCounts.drone || 0;
+        }
+        
         // 예산 확인
         // 예산 시스템은 game-content/budget/budget-system.js에서 관리됩니다.
+        // 드롭다운 제거로 인물 선택 없음 (personnel = null)
         let cost = 0;
         if (typeof calculateEventBudgetCost === 'function') {
-            // 선택된 인물 가져오기
-            const personnelSelect = document.querySelector('.event-response-personnel');
-            let personnel = null;
-            if (personnelSelect && personnelSelect.value) {
-                personnel = this.state.getPersonnelById(personnelSelect.value);
-            }
-            cost = calculateEventBudgetCost(event, responseType, personnel);
+            cost = calculateEventBudgetCost(event, responseType, null);
         } else {
             // 폴백
             cost = event.budgetCost;
-            if (responseType === 'drone') cost = event.budgetCost * 1.2;
+            if (responseType === 'dispatch') cost = event.budgetCost * 1.5;
+            else if (responseType === 'drone') cost = event.budgetCost * 1.2;
             else if (responseType === 'cctv') cost = event.budgetCost * 0.5;
             else if (responseType === 'ignore') cost = 0;
         }
@@ -918,12 +1196,9 @@ class Game {
             }
         }
         
-        // 선택된 인물 가져오기
-        const personnelSelect = document.querySelector('.event-response-personnel');
-        const personnelId = personnelSelect ? personnelSelect.value : null;
-        
+        // 드롭다운 제거로 personnelId는 항상 null (매개변수로 받지만 사용하지 않음)
         // 사건 해결
-        const success = this.state.resolveEvent(eventId, responseType, personnelId);
+        const success = this.state.resolveEvent(eventId, responseType, null);
         
         if (success) {
             // 오버레이 닫기
@@ -934,19 +1209,24 @@ class Game {
             this.updateOperatorUI();
             this.updateUI();
             
-            // 결과 메시지
-            // ResponseNames는 game-content/event-responses.js에서 로드됩니다.
-            const responseName = (typeof ResponseNames !== 'undefined' && ResponseNames[responseType])
-                ? ResponseNames[responseType]
-                : responseType;
-            
-            setTimeout(() => {
-                // 메시지는 game-content/messages.js에서 로드됩니다.
-                const message = (typeof GameMessages !== 'undefined' && GameMessages.eventResolved)
-                    ? GameMessages.eventResolved(responseName, cost)
-                    : `사건 처리 완료!\n\n대응 방법: ${responseName}\n예산 소모: ${cost.toFixed(1)}%`;
-                alert(message);
-            }, 100);
+            // 조언자 대사: 파견 시작 알림 (메인 화면 advisorDialogueBox에 표시)
+            if (typeof displayAdvisorDialogue === 'function') {
+                const responseName = (typeof ResponseNames !== 'undefined' && ResponseNames[responseType])
+                    ? ResponseNames[responseType]
+                    : responseType;
+                
+                const event = this.state.activeEvents.find(e => e.id === eventId);
+                if (event) {
+                    const resourceInfo = resourceCounts 
+                        ? `경찰 ${resourceCounts.police || 0}대, 드론 ${resourceCounts.drone || 0}대`
+                        : '';
+                    
+                    displayAdvisorDialogue(`📤 ${event.title} 사건에 ${responseName}로 대응을 시작했습니다.${resourceInfo ? '\n' + resourceInfo : ''}\n결과는 복귀 시간에 알려드리겠습니다.`);
+                }
+            }
+        } else {
+            // 처리 시작 실패 (이미 처리 중이거나 존재하지 않는 사건)
+            // UI 업데이트는 위에서 이미 처리됨
         }
     }
     
@@ -960,6 +1240,68 @@ class Game {
     }
     
     // 파벌 이벤트 표시는 game-content/events/faction-event-ui.js에서 처리됩니다.
+    
+    // 초대형 사건 처리
+    showMegaEvent(megaEvent) {
+        if (typeof showMegaEventUI === 'function') {
+            showMegaEventUI(
+                megaEvent,
+                (megaEvent, option) => this.handleMegaEventResponse(megaEvent, option),
+                () => this.updateUI()
+            );
+        }
+    }
+    
+    // 초대형 사건 대응 처리
+    handleMegaEventResponse(megaEvent, option) {
+        if (!megaEvent || !option) return;
+        
+        // 자원 소모량 결정
+        const policeCount = option.police || 0;
+        const droneCount = option.drone || 0;
+        
+        // 자원 사용 가능 여부 확인
+        const availablePolice = (typeof getAvailablePoliceCount === 'function')
+            ? getAvailablePoliceCount(this.state)
+            : this.state.resources.police || 0;
+        const availableDrones = (typeof getAvailableDroneCount === 'function')
+            ? getAvailableDroneCount(this.state)
+            : this.state.resources.drones || 0;
+        
+        if (availablePolice < policeCount || availableDrones < droneCount) {
+            alert('자원이 부족합니다!');
+            return;
+        }
+        
+        // 자원 파견
+        if (typeof deployResources === 'function') {
+            // 초대형 사건용 자원 파견 (커스텀 자원 수 지정)
+            const deployed = deployResources(this.state, 'mega', 'dispatch', megaEvent.id, policeCount, droneCount);
+            
+            // 경찰 손실 처리
+            if (typeof applyPoliceCasualty === 'function') {
+                const casualties = applyPoliceCasualty(this.state, 'mega', policeCount);
+                if (casualties > 0) {
+                    console.log(`⚠ 초대형 사건 처리 중 경찰 ${casualties}명이 손실되었습니다.`);
+                }
+            }
+        }
+        
+        // 사건 해결 처리 (일반 사건처럼)
+        megaEvent.status = 'resolved';
+        megaEvent.responseType = option.type;
+        megaEvent.resolvedAt = { time: this.state.time, day: this.state.day };
+        
+        // 예산 처리
+        const actualBudgetCost = megaEvent.budgetCost * 2.0; // 초대형은 2배 비용
+        if (typeof applyBudgetCost === 'function') {
+            applyBudgetCost(this.state, actualBudgetCost);
+        }
+        
+        // UI 업데이트
+        this.updateUI();
+        this.renderOperatorEvents();
+    }
     
     // 파벌 이벤트 영향 적용
     applyFactionEventImpact(factionEvent, option) {
@@ -1081,8 +1423,8 @@ class Game {
             }, (startDelay + duration) * 1000);
         }, 50); // 50ms마다 새 스캔라인 생성
         
-        // 랜덤한 지속 시간 (1.5초 ~ 2.5초)
-        const duration = 1500 + Math.random() * 1000;
+        // 랜덤한 지속 시간 (0.5초 ~ 1.5초, 1초 단축)
+        const duration = 500 + Math.random() * 1000; // 1초 단축: 1500ms -> 500ms
         
         // 전환 완료 후 정리
         setTimeout(() => {
@@ -1148,8 +1490,53 @@ class Game {
     }
     
     
+    // 게임 종료 체크
+    checkGameEnd() {
+        // 30일이 지나면 게임 종료
+        const stability = this.state.cityStats.stability;
+        const crimeRate = this.state.cityStats.crimeRate;
+        const factionTension = this.state.cityStats.factionTension;
+        
+        // 승리/패배 조건 판단
+        let result = '';
+        let message = '';
+        
+        if (stability >= 60 && crimeRate <= 40 && factionTension <= 50) {
+            result = 'victory';
+            message = `게임 종료!\n\n30일간의 도시 관리가 완료되었습니다.\n\n최종 결과:\n- 안정도: ${stability.toFixed(1)}%\n- 범죄율: ${crimeRate.toFixed(1)}%\n- 파벌 긴장도: ${factionTension.toFixed(1)}%\n\n도시가 안정적으로 관리되었습니다!`;
+        } else if (stability < 30 || crimeRate > 70 || factionTension > 80) {
+            result = 'defeat';
+            message = `게임 종료!\n\n30일간의 도시 관리가 완료되었습니다.\n\n최종 결과:\n- 안정도: ${stability.toFixed(1)}%\n- 범죄율: ${crimeRate.toFixed(1)}%\n- 파벌 긴장도: ${factionTension.toFixed(1)}%\n\n도시가 혼란 상태에 빠졌습니다...`;
+        } else {
+            result = 'neutral';
+            message = `게임 종료!\n\n30일간의 도시 관리가 완료되었습니다.\n\n최종 결과:\n- 안정도: ${stability.toFixed(1)}%\n- 범죄율: ${crimeRate.toFixed(1)}%\n- 파벌 긴장도: ${factionTension.toFixed(1)}%\n\n도시는 그럭저럭 유지되고 있습니다.`;
+        }
+        
+        // 게임 정지
+        if (this.operatorTimeInterval) {
+            clearInterval(this.operatorTimeInterval);
+            this.operatorTimeInterval = null;
+        }
+        
+        if (this.operatorActivity) {
+            this.operatorActivity.isActive = false;
+        }
+        
+        // 결과 표시
+        setTimeout(() => {
+            alert(message);
+            // 페이지 새로고침 또는 메인 메뉴로 이동
+            if (confirm('게임을 다시 시작하시겠습니까?')) {
+                location.reload();
+            }
+        }, 100);
+    }
+    
     gameLoop() {
-        this.mapRenderer.render(this.state);
+        // mapRenderer가 있을 때만 렌더링
+        if (this.mapRenderer) {
+            this.mapRenderer.render(this.state);
+        }
         requestAnimationFrame(() => this.gameLoop());
     }
 }
