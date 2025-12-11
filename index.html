@@ -54,7 +54,7 @@
         <div class="icon-box-container">
           <div class="icon-box" data-info-id="0" data-icon-name="도시 통계"></div>
           <div class="icon-box" data-info-id="1" data-icon-name="파벌 관계"></div>
-          <div class="icon-box" data-info-id="2" data-icon-name="구역 정보"></div>
+          <div class="icon-box" data-info-id="2" data-icon-name="자원 관리"></div>
           <div class="icon-box" data-info-id="3" data-icon-name="자원 현황"></div>
           <div class="icon-box" data-info-id="4" data-icon-name="부서 정보"></div>
         </div>
@@ -104,6 +104,7 @@
             <div class="operator-stats">
               <span>활성 사건: <span id="activeEventsCount">0</span>개</span>
               <span>해결 사건: <span id="resolvedEventsCount">0</span>개</span>
+              <span>처리 불가: <span id="failedEventsCount">0</span>개</span>
             </div>
           </div>
           <div class="operator-events" id="operatorEventsList">
@@ -132,6 +133,10 @@
       </div>
       <div class="advisor-box-stand" id="advisorBoxStand">
         <!-- 조언자 이미지가 들어갈 공간 -->
+      </div>
+      <!-- 확인 버튼 박스 -->
+      <div class="info-confirm-container" id="infoConfirmContainer" style="display: none;">
+        <button class="info-confirm-btn" id="infoConfirmBtn">확인</button>
       </div>
     </div>
   </div>
@@ -220,6 +225,12 @@
       <div class="advisor-box-stand" id="advisorBoxStandEvent">
         <!-- 조언자 이미지가 들어갈 공간 -->
       </div>
+      <!-- 확인 버튼 박스 -->
+      <div class="event-response-confirm-container" id="eventResponseConfirmContainer">
+        <button class="event-response-confirm-btn" id="eventResponseConfirmBtn" style="display: none;">
+          확인
+        </button>
+      </div>
     </div>
         <div class="event-response-options" id="eventResponseOptions">
           <!-- 대응 선택지가 표시됩니다 -->
@@ -298,8 +309,15 @@
   <!-- 사건 시스템 -->
   <script src="game-content/events/event-types.js"></script>
   <script src="game-content/events/event-templates.js"></script>
+  <script src="game-content/events/mega-event-templates.js"></script>
+  <script src="game-content/events/mega-event-faction-adjustment.js"></script>
   <script src="game-content/events/event-responses.js"></script>
   <script src="game-content/events/faction-events.js"></script>
+  <script src="game-content/events/event-generation.js"></script>
+  <script src="game-content/events/mega-event-ui.js"></script>
+  
+  <!-- 자원 제약 시스템 -->
+  <script src="game-content/resources/resource-constraints.js"></script>
   <script src="game-content/events/event-response-ui.js"></script>
   <script src="game-content/events/faction-event-ui.js"></script>
   
@@ -307,6 +325,7 @@
   <script src="game-content/icons/city-stats.js"></script>
   <script src="game-content/icons/faction-relations.js"></script>
   <script src="game-content/icons/district-info.js"></script>
+  <script src="game-content/icons/resource-management.js"></script>
   <script src="game-content/icons/resources.js"></script>
   <script src="game-content/icons/department-info.js"></script>
   
