@@ -1,0 +1,48 @@
+/* 기본 스타일 리셋 및 전역 설정 */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* CSS 변수 - 다크 모드 (기본) */
+:root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #0a0a0a;
+    --bg-tertiary: #2a2a2a;
+    --bg-pattern: #0f0f0f;
+    --text-primary: #eee;
+    --text-secondary: #ccc;
+    --text-tertiary: #888;
+    --border-color: #4a9eff;
+    --accent-color: #6bcf7f;
+    --shadow-color: rgba(74, 158, 255, 0.3);
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: var(--bg-primary);
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, var(--bg-pattern) 2px, var(--bg-pattern) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, var(--bg-pattern) 2px, var(--bg-pattern) 4px);
+    background-size: 20px 20px;
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 20px 20px 10px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+

@@ -1,0 +1,221 @@
+/* 시간대 표시 */
+
+/* 시간대 상단 박스 (center-content 오른쪽 상단) */
+.time-display-box {
+    position: absolute;
+    top: 0;
+    height: 60px; /* 30px + 30px */
+    background: #0a0a0a;
+    border: 3px solid #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 20px rgba(74, 158, 255, 0.3);
+    z-index: 10;
+    margin-bottom: 0;
+}
+
+/* 왼쪽 박스 - 현재 재생 중인 노래 정보 */
+.music-info-box {
+    right: 60px; /* 오른쪽 박스(50px) + 공백(10px) */
+    width: 210px; /* 전체(270px) - 오른쪽(50px) - 공백(10px) */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.music-title {
+    color: #6bcf7f;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    font-family: 'Courier New', monospace;
+    text-shadow: 
+        1px 1px 0 #000,
+        -1px -1px 0 #000;
+}
+
+.music-artist {
+    color: #888;
+    font-size: 0.7rem;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    font-family: 'Courier New', monospace;
+}
+
+/* 오른쪽 박스 - 환경설정 */
+.settings-box {
+    right: 0;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.settings-box:hover {
+    background: #1a1a1a;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 15px rgba(74, 158, 255, 0.5);
+}
+
+.settings-icon {
+    color: #4a9eff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    text-shadow: 
+        1px 1px 0 #000,
+        -1px -1px 0 #000;
+}
+
+/* 시간대 이미지 표시 창 (center-content 오른쪽 상단) */
+.time-display-window {
+    position: absolute;
+    top: 73px; /* 상단 박스(60px) + border(3px) + 공백(10px) */
+    right: 0;
+    width: 270px;
+    height: calc((100vh - 300px) * 0.67 - 40px);
+    max-height: calc((100vh - 300px) * 0.67 - 40px);
+    background: #0a0a0a;
+    border: 3px solid #4a9eff;
+    box-shadow: 
+        inset 0 0 0 1px #000,
+        0 0 0 1px #000,
+        0 0 20px rgba(74, 158, 255, 0.3);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.time-display-image {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease;
+    background-color: #1a1a1a;
+}
+
+/* 시간대별 기본 배경 색상 (이미지가 없을 때) */
+/* 새벽 (0-5시) - 어두운 파란색, 달 */
+.time-display-image.period-dawn {
+    background: linear-gradient(180deg, #0a0a2e 0%, #1a1a3a 50%, #2d2d4a 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-dawn::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    right: 20%;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, #ffffff 0%, #ffffff40 50%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+/* 오전 (6-11시) - 밝은 노란색, 해 */
+.time-display-image.period-morning {
+    background: linear-gradient(180deg, #ffd700 0%, #ffd89b 50%, #ffecd2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-morning::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, #ffff00 0%, #ffd700 50%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+
+/* 오후 (12-16시) - 하늘색, 큰 해 */
+.time-display-image.period-afternoon {
+    background: linear-gradient(180deg, #87ceeb 0%, #b0e0e6 50%, #e0f6ff 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-afternoon::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle, #ffff00 0%, #ffd700 50%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.9);
+}
+
+/* 저녁 (17-20시) - 주황색, 석양 */
+.time-display-image.period-evening {
+    background: linear-gradient(180deg, #ff6b35 0%, #ff9a56 50%, #ffad56 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-evening::before {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, #ff8c42 0%, #ff6b35 50%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 25px rgba(255, 140, 66, 0.7);
+}
+
+/* 밤 (21-23시) - 어두운 색, 별들 */
+.time-display-image.period-night {
+    background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-display-image.period-night::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    right: 25%;
+    width: 8px;
+    height: 8px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.8),
+        80px 30px 0 2px #ffffff,
+        120px 20px 0 2px #ffffff,
+        60px 50px 0 1.5px #ffffff,
+        140px 60px 0 1.5px #ffffff;
+}
+
+

@@ -1,0 +1,212 @@
+/* 라이트 모드 스타일 */
+
+/* CSS 변수 - 라이트 모드 */
+body.light-mode {
+    --bg-primary: #F7F7F7;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e8e8e8;
+    --bg-pattern: #e0e0e0;
+    --text-primary: #1a1a1a;
+    --text-secondary: #333;
+    --text-tertiary: #666;
+    --border-color: #0066cc;
+    --accent-color: #00a651;
+    --shadow-color: rgba(0, 102, 204, 0.3);
+}
+
+/* 라이트 모드일 때 무늬 제거 */
+body.light-mode {
+    background-image: none;
+}
+
+/* 라이트 모드일 때 모든 텍스트 그림자 제거 및 검정색 */
+body.light-mode * {
+    text-shadow: none !important;
+    color: #000000;
+}
+
+/* 라이트 모드에서 accent-color는 유지 */
+body.light-mode .stat-value,
+body.light-mode .news-title,
+body.light-mode .operator-area h3,
+body.light-mode .choice-area h3,
+body.light-mode .response::before,
+body.light-mode .confirm,
+body.light-mode .news-panel h3,
+body.light-mode .operator-time span span,
+body.light-mode .operator-stats span span,
+body.light-mode .music-title,
+body.light-mode .settings-icon,
+body.light-mode .settings-panel-header h2,
+body.light-mode .info-panel-header h2,
+body.light-mode .map-area h2 {
+    color: #000000;
+}
+
+/* 정보 패널 */
+body.light-mode .info-panel {
+    background-color: #F7F7F7;
+}
+
+/* 뉴스 패널 */
+body.light-mode .news-panel {
+    background: #F7F7F7;
+}
+
+body.light-mode .news-item {
+    background: #F7F7F7;
+}
+
+body.light-mode .news-title {
+    color: #000000;
+}
+
+body.light-mode .news-content {
+    color: #000000;
+}
+
+body.light-mode .news-time {
+    color: #000000;
+}
+
+/* 오퍼레이터 활동 영역 */
+body.light-mode .operator-area {
+    background: #F7F7F7;
+}
+
+body.light-mode .operator-info {
+    background-color: #F7F7F7;
+}
+
+body.light-mode .operator-time,
+body.light-mode .operator-stats {
+    color: #000000;
+}
+
+body.light-mode .operator-time span span,
+body.light-mode .operator-stats span span {
+    color: #000000;
+}
+
+body.light-mode .operator-events {
+    background-color: #F7F7F7;
+}
+
+body.light-mode .operator-event-item {
+    background-color: #F7F7F7;
+}
+
+body.light-mode .operator-event-details {
+    color: #000000;
+}
+
+body.light-mode .operator-event-location {
+    color: #000000;
+}
+
+body.light-mode .operator-event-cost {
+    color: #000000;
+}
+
+body.light-mode .operator-btn {
+    background: #F7F7F7;
+    color: #000000;
+}
+
+body.light-mode .operator-btn:hover {
+    background: #e8e8e8;
+}
+
+body.light-mode .operator-btn:active {
+    background: #d0d0d0;
+}
+
+/* 시간대 표시 */
+body.light-mode .music-info-box {
+    background: #F7F7F7;
+}
+
+body.light-mode .settings-icon {
+    color: #808080;
+}
+
+/* 정보 패널 오버레이 */
+body.light-mode .info-overlay {
+    background: rgba(247, 247, 247, 0.8);
+}
+
+body.light-mode .info-panel-content {
+    background: #F7F7F7;
+}
+
+body.light-mode .info-panel-header {
+    background: #F7F7F7;
+}
+
+body.light-mode .info-panel-header h2 {
+    color: #000000;
+}
+
+body.light-mode .info-close-btn {
+    background: #F7F7F7;
+    color: #000000;
+}
+
+body.light-mode .info-close-btn:hover {
+    background: #e8e8e8;
+}
+
+body.light-mode .info-panel-body {
+    background: #F7F7F7;
+    color: #000000;
+}
+
+body.light-mode .info-section h3 {
+    color: #000000;
+}
+
+body.light-mode .info-section p {
+    color: #000000;
+}
+
+body.light-mode .info-graph {
+    background: #F7F7F7;
+}
+
+body.light-mode .character-section h4 {
+    color: #000000;
+}
+
+body.light-mode .character-card {
+    background: #F7F7F7;
+}
+
+body.light-mode .character-card:hover {
+    background: #e8e8e8;
+}
+
+body.light-mode .character-name {
+    color: #000000;
+}
+
+body.light-mode .character-role {
+    color: #000000;
+}
+
+body.light-mode .character-stats {
+    color: #000000;
+}
+
+/* 환경설정 오버레이 */
+body.light-mode .settings-overlay {
+    background: rgba(247, 247, 247, 0.8);
+}
+
+body.light-mode .settings-panel-content {
+    background: #F7F7F7;
+}
+
+body.light-mode .settings-panel-header {
+    background: #F7F7F7;
+}
+
