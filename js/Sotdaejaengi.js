@@ -249,7 +249,18 @@ class GameState {
         if (typeof window.generateEvents === 'function') {
             return window.generateEvents(this);
         } else {
-            console.warn('generateEvents 함수가 로드되지 않았습니다.');
+            // 함수가 로드되지 않은 경우 상세한 디버깅 정보 출력
+            console.error('generateEvents 함수가 로드되지 않았습니다.');
+            console.error('event-generation.js 파일이 올바르게 로드되었는지 확인하세요.');
+            console.error('현재 window.generateEvents 타입:', typeof window.generateEvents);
+            console.error('window 객체 확인:', typeof window !== 'undefined' ? '존재함' : '존재하지 않음');
+            
+            // 한 번만 경고를 출력하도록 플래그 사용
+            if (!this._generateEventsWarningShown) {
+                this._generateEventsWarningShown = true;
+                console.error('이 경고가 반복적으로 나타나면 event-generation.js 파일에 오류가 있을 수 있습니다.');
+            }
+            
             return 0;
         }
     }
